@@ -1,6 +1,6 @@
 import { BlogViewModel } from "../@types";
 
-export const blogData: BlogViewModel[] = [
+export const blogsData: BlogViewModel[] = [
   {
     id: "blog1",
     name: "LogRocket",
