@@ -19,3 +19,12 @@ export type PostViewModel = PostInputModel & {
   id: string;
   blogName: string;
 };
+
+export type FieldError = Partial<{
+  message: string;
+  field: string;
+}>;
+
+export type APIErrorResult = {
+  errorsMessages: FieldError[];
+};

@@ -1,0 +1,42 @@
+import { checkSchema } from "express-validator";
+import { WEBSITE_URL } from "../constants/regex";
+
+export const blogSchema = checkSchema(
+  {
+    name: {
+      trim: true,
+      isLength: {
+        errorMessage: "The field must contain from 1 to 15 characters",
+        options: {
+          min: 1,
+          max: 15,
+        },
+      },
+    },
+    description: {
+      trim: true,
+      isLength: {
+        errorMessage: "The field must contain from 1 to 500 characters",
+        options: {
+          min: 1,
+          max: 500,
+        },
+      },
+    },
+    websiteUrl: {
+      trim: true,
+      isLength: {
+        errorMessage: "The field must contain from 1 to 100 characters",
+        options: {
+          min: 1,
+          max: 100,
+        },
+      },
+      matches: {
+        options: WEBSITE_URL,
+        errorMessage: "Invalid url entered",
+      },
+    },
+  },
+  ["body"]
+);

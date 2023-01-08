@@ -14,8 +14,7 @@ export const getBlogByIdHandler = (req: Request<{ id: string }>, res: Response) 
   console.log(req.query.id);
 
   if (data) {
-    res.status(constants.HTTP_STATUS_OK).send(data);
-    return;
+    return res.status(constants.HTTP_STATUS_OK).send(data);
   }
 
   res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
@@ -25,9 +24,28 @@ export const createBlogHandler = (req: Request<{}, {}, BlogInputModel>, res: Res
   const data = blogsRepository.createBlog(req.body);
 
   if (!data) {
-    res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
-    return;
+    return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
   }
 
   res.status(constants.HTTP_STATUS_CREATED).send(data);
+};
+
+export const updateBlogByIdHandler = (req: Request<{ id: string }, {}, BlogInputModel>, res: Response) => {
+  const data = blogsRepository.updateBlogById(req.params.id, req.body);
+
+  if (!data) {
+    return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
+  }
+
+  res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
+};
+
+export const deleteBlogHandler = (req: Request<{ id: string }>, res: Response) => {
+  const data = blogsRepository.deleteBlog(req.params.id);
+
+  if (!data) {
+    return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
+  }
+
+  res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
 };
