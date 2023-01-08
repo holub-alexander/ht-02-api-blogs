@@ -21,6 +21,7 @@ export const blogsRepository = {
     const findIndex = blogsData.findIndex((blog) => blog.id === blogId);
 
     if (findIndex > -1) {
+      blogsData.splice(findIndex, 1);
       return blogsData.filter((blog) => blog.id !== blogId);
     }
 
@@ -37,4 +38,6 @@ export const blogsRepository = {
 
     return null;
   },
+
+  deleteAllBlogs: (): BlogViewModel[] => blogsData.splice(0, blogsData.length),
 };
