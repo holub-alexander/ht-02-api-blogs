@@ -8,13 +8,14 @@ import {
 } from "../controllers/blogs.controller";
 import { validate } from "../middleware/validate";
 import { blogSchema } from "../utils/schemas/blog-schema";
+import { basicAuth } from "../middleware/basic-auth";
 
 const blogsRouter = express.Router();
 
 blogsRouter.get("/", getBlogsHandler);
 blogsRouter.get("/:id", getBlogByIdHandler);
-blogsRouter.post("/", blogSchema, validate, createBlogHandler);
-blogsRouter.put("/:id", blogSchema, validate, updateBlogByIdHandler);
-blogsRouter.delete("/:id", deleteBlogHandler);
+blogsRouter.post("/", basicAuth, blogSchema, validate, createBlogHandler);
+blogsRouter.put("/:id", basicAuth, blogSchema, validate, updateBlogByIdHandler);
+blogsRouter.delete("/:id", basicAuth, deleteBlogHandler);
 
 export default blogsRouter;
