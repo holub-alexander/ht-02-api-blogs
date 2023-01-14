@@ -22,8 +22,6 @@ export const getPostByIdHandler = async (req: Request<{ id: string }>, res: Resp
 export const createPostHandler = async (req: Request<{}, {}, PostViewModel>, res: Response) => {
   const data = await postsService.createPost(req.body);
 
-  console.log("data", data);
-
   if (!data) {
     return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
   }

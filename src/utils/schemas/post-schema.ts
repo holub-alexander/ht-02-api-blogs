@@ -1,4 +1,5 @@
 import { checkSchema } from "express-validator";
+import { blogsService } from "../../services/blogs.service";
 
 export const postSchema = checkSchema(
   {
@@ -39,6 +40,15 @@ export const postSchema = checkSchema(
         options: {
           min: 1,
           max: 30,
+        },
+      },
+      custom: {
+        options: async (value) => {
+          const findBlog = await blogsService.getBlogById(value);
+
+          if (!findBlog) {
+            return Promise.reject("Blog with specified id was not found");
+          }
         },
       },
     },
