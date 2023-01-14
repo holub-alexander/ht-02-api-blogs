@@ -10,7 +10,7 @@ export const getPostsHandler = async (_: Request, res: Response) => {
 };
 
 export const getPostByIdHandler = async (req: Request<{ id: string }>, res: Response) => {
-  const data = postsService.getPostById(req.params.id);
+  const data = await postsService.getPostById(req.params.id);
 
   if (data) {
     return res.status(constants.HTTP_STATUS_OK).send(data);
