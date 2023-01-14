@@ -37,7 +37,11 @@ export const postsService = {
     const findBlog = await blogsService.getBlogById(body.blogId);
 
     if (findBlog) {
-      const data = await postsCollection.insertOne({ ...body, createdAt: new Date().toISOString() }, {});
+      const data = await postsCollection.insertOne({
+        ...body,
+        blogName: findBlog.name,
+        createdAt: new Date().toISOString(),
+      });
 
       if (data.acknowledged) {
         return postsService.getPostById(data.insertedId.toString());
@@ -58,10 +62,11 @@ export const postsService = {
     return false;
   },
 
-  updatePostById: async (postId: string, data: Omit<PostInputModel, "blogId">): Promise<boolean> => {
+  updatePostById: async (postId: string, data: PostInputModel): Promise<boolean> => {
     const isValidId = ObjectId.isValid(postId);
+    const findBlog = await blogsService.getBlogById(data.blogId);
 
-    if (isValidId) {
+    if (isValidId && findBlog) {
       const res = await postsCollection.updateOne({ _id: new ObjectId(postId) }, { $set: data });
       return res.modifiedCount > 0;
     }

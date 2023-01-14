@@ -22,6 +22,8 @@ export const getPostByIdHandler = async (req: Request<{ id: string }>, res: Resp
 export const createPostHandler = async (req: Request<{}, {}, PostViewModel>, res: Response) => {
   const data = await postsService.createPost(req.body);
 
+  console.log("data", data);
+
   if (!data) {
     return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
   }
@@ -29,10 +31,7 @@ export const createPostHandler = async (req: Request<{}, {}, PostViewModel>, res
   res.status(constants.HTTP_STATUS_CREATED).send(data);
 };
 
-export const updatePostByIdHandler = async (
-  req: Request<{ id: string }, {}, Omit<PostInputModel, "blogId">>,
-  res: Response
-) => {
+export const updatePostByIdHandler = async (req: Request<{ id: string }, {}, PostInputModel>, res: Response) => {
   const isUpdated = await postsService.updatePostById(req.params.id, req.body);
 
   res.sendStatus(isUpdated ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);

@@ -32,7 +32,7 @@ export const postSchema = checkSchema(
         },
       },
     },
-    /*blogId: {
+    blogId: {
       trim: true,
       isLength: {
         errorMessage: "The field must contain from 1 to 30 characters",
@@ -41,7 +41,7 @@ export const postSchema = checkSchema(
           max: 30,
         },
       },
-    },*/
+    },
   },
   ["body"]
 );
