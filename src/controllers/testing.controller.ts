@@ -1,11 +1,13 @@
-import { blogsRepository } from "../repositories/blogs-repository";
-import { postsRepository } from "../repositories/posts-repository";
 import { constants } from "http2";
 import { Request, Response } from "express";
+import { blogsService } from "../services/blogs.service";
+import { postsService } from "../services/posts.service";
 
-export const deleteAllHandler = (_: Request, res: Response) => {
-  blogsRepository.deleteAllBlogs();
-  postsRepository.deleteAllPosts();
+export const deleteAllHandler = async (_: Request, res: Response) => {
+  const deletedBlogs = await blogsService.deleteAllBlogs();
+  const deletedPosts = await postsService.deleteAllPosts();
 
-  return res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
+  if (deletedBlogs && deletedPosts) {
+    return res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
+  }
 };

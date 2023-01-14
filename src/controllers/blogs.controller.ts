@@ -1,17 +1,16 @@
 import { Request, Response } from "express";
-import { blogsRepository } from "../repositories/blogs-repository";
 import { constants } from "http2";
 import { BlogInputModel } from "../@types";
+import { blogsService } from "../services/blogs.service";
 
-export const getBlogsHandler = (_: Request, res: Response) => {
-  const data = blogsRepository.getAllBlogs();
+export const getBlogsHandler = async (_: Request, res: Response) => {
+  const data = await blogsService.getAllBlogs();
 
   res.status(constants.HTTP_STATUS_OK).send(data);
 };
 
-export const getBlogByIdHandler = (req: Request<{ id: string }>, res: Response) => {
-  const data = blogsRepository.getBlogById(req.params.id);
-  console.log(req.query.id);
+export const getBlogByIdHandler = async (req: Request<{ id: string }>, res: Response) => {
+  const data = await blogsService.getBlogById(req.params.id);
 
   if (data) {
     return res.status(constants.HTTP_STATUS_OK).send(data);
@@ -20,8 +19,8 @@ export const getBlogByIdHandler = (req: Request<{ id: string }>, res: Response) 
   res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
 };
 
-export const createBlogHandler = (req: Request<{}, {}, BlogInputModel>, res: Response) => {
-  const data = blogsRepository.createBlog(req.body);
+export const createBlogHandler = async (req: Request<{}, {}, BlogInputModel>, res: Response) => {
+  const data = await blogsService.createBlog(req.body);
 
   if (!data) {
     return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
@@ -30,22 +29,18 @@ export const createBlogHandler = (req: Request<{}, {}, BlogInputModel>, res: Res
   res.status(constants.HTTP_STATUS_CREATED).send(data);
 };
 
-export const updateBlogByIdHandler = (req: Request<{ id: string }, {}, BlogInputModel>, res: Response) => {
-  const data = blogsRepository.updateBlogById(req.params.id, req.body);
+export const updateBlogByIdHandler = async (req: Request<{ id: string }, {}, BlogInputModel>, res: Response) => {
+  const isUpdated = await blogsService.updateBlogById(req.params.id, req.body);
 
-  if (!data) {
+  if (!isUpdated) {
     return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
   }
 
   res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
 };
 
-export const deleteBlogHandler = (req: Request<{ id: string }>, res: Response) => {
-  const data = blogsRepository.deleteBlog(req.params.id);
+export const deleteBlogHandler = async (req: Request<{ id: string }>, res: Response) => {
+  const isDeleted = await blogsService.deleteBlog(req.params.id);
 
-  if (!data) {
-    return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
-  }
-
-  res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
+  res.sendStatus(isDeleted ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);
 };

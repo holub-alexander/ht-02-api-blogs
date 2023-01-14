@@ -1,18 +1,16 @@
 import { Request, Response } from "express";
 import { constants } from "http2";
-import { postsRepository } from "../repositories/posts-repository";
+import { postsService } from "../services/posts.service";
 import { PostInputModel, PostViewModel } from "../@types";
 
-export const getPostsHandler = (_: Request, res: Response) => {
-  const data = postsRepository.getAllPosts();
+export const getPostsHandler = async (_: Request, res: Response) => {
+  const data = await postsService.getAllPosts();
 
   res.status(constants.HTTP_STATUS_OK).send(data);
 };
 
-export const getPostByIdHandler = (req: Request<{ id: string }>, res: Response) => {
-  console.log(req.params.id);
-  const data = postsRepository.getPostById(req.params.id);
-  console.log(req.query.id);
+export const getPostByIdHandler = async (req: Request<{ id: string }>, res: Response) => {
+  const data = postsService.getPostById(req.params.id);
 
   if (data) {
     return res.status(constants.HTTP_STATUS_OK).send(data);
@@ -21,8 +19,8 @@ export const getPostByIdHandler = (req: Request<{ id: string }>, res: Response) 
   res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
 };
 
-export const createPostHandler = (req: Request<{}, {}, PostViewModel>, res: Response) => {
-  const data = postsRepository.createPost(req.body);
+export const createPostHandler = async (req: Request<{}, {}, PostViewModel>, res: Response) => {
+  const data = await postsService.createPost(req.body);
 
   if (!data) {
     return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
@@ -31,22 +29,17 @@ export const createPostHandler = (req: Request<{}, {}, PostViewModel>, res: Resp
   res.status(constants.HTTP_STATUS_CREATED).send(data);
 };
 
-export const updatePostByIdHandler = (req: Request<{ id: string }, {}, PostInputModel>, res: Response) => {
-  const data = postsRepository.updatePostById(req.params.id, req.body);
+export const updatePostByIdHandler = async (
+  req: Request<{ id: string }, {}, Omit<PostInputModel, "blogId">>,
+  res: Response
+) => {
+  const isUpdated = await postsService.updatePostById(req.params.id, req.body);
 
-  if (!data) {
-    return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
-  }
-
-  res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
+  res.sendStatus(isUpdated ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);
 };
 
-export const deletePostHandler = (req: Request<{ id: string }>, res: Response) => {
-  const data = postsRepository.deletePost(req.params.id);
+export const deletePostHandler = async (req: Request<{ id: string }>, res: Response) => {
+  const isDeleted = await postsService.deletePost(req.params.id);
 
-  if (!data) {
-    return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
-  }
-
-  res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
+  res.sendStatus(isDeleted ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);
 };

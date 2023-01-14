@@ -6,6 +6,7 @@ export type BlogInputModel = {
 
 export type BlogViewModel = BlogInputModel & {
   id: string;
+  createdAt: string;
 };
 
 export type PostInputModel = {
@@ -18,6 +19,7 @@ export type PostInputModel = {
 export type PostViewModel = PostInputModel & {
   id: string;
   blogName: string;
+  createdAt: string;
 };
 
 export type FieldError = Partial<{

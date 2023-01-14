@@ -32,16 +32,16 @@ export const postSchema = checkSchema(
         },
       },
     },
-    blogId: {
+    /*blogId: {
       trim: true,
       isLength: {
-        errorMessage: "The field must contain from 1 to 15 characters",
+        errorMessage: "The field must contain from 1 to 30 characters",
         options: {
           min: 1,
-          max: 15,
+          max: 30,
         },
       },
-    },
+    },*/
   },
   ["body"]
 );
