@@ -24,9 +24,9 @@ export const blogsService = {
       .toArray();
 
     return {
-      pageSize: res.length,
-      page: +pageNumber,
       pagesCount: Math.ceil(totalCount / pageSize),
+      page: +pageNumber,
+      pageSize: res.length,
       totalCount,
       items: res.map((blog) => ({
         id: blog._id.toString(),

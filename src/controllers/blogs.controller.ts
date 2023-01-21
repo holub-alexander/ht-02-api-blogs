@@ -64,7 +64,7 @@ export const createPostForCurrentBlog = async (req: Request<{ id: string }, {}, 
 
   const createdPost = await postsService.createPost({ ...req.body, blogId: findBlog.id });
 
-  res.status(constants.HTTP_STATUS_OK).send(createdPost);
+  res.status(constants.HTTP_STATUS_CREATED).send(createdPost);
 };
 
 export const updateBlogByIdHandler = async (req: Request<{ id: string }, {}, BlogInputModel>, res: Response) => {
