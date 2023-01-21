@@ -16,7 +16,7 @@ export const connectDB = async () => {
   try {
     await client.connect();
     await client.db("admin").command({ ping: 1 });
-    console.log("Connected successfully to server");
+    console.log("Connected successfully to MongoDB server");
   } catch (err) {
     await client.close();
     console.log(err);

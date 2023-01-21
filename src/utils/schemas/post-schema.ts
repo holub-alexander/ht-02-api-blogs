@@ -1,5 +1,42 @@
 import { checkSchema } from "express-validator";
 import { blogsService } from "../../services/blogs.service";
+import { paginationQueryParamsSchema } from "./query-params/pagination-schema";
+import { sortQueryParamsSchema } from "./query-params/sort-schema";
+
+export const postsQuerySchema = [paginationQueryParamsSchema, sortQueryParamsSchema];
+
+export const blogPostSchema = checkSchema({
+  title: {
+    trim: true,
+    isLength: {
+      errorMessage: "The field must contain from 1 to 30 characters",
+      options: {
+        min: 1,
+        max: 30,
+      },
+    },
+  },
+  shortDescription: {
+    trim: true,
+    isLength: {
+      errorMessage: "The field must contain from 1 to 100 characters",
+      options: {
+        min: 1,
+        max: 100,
+      },
+    },
+  },
+  content: {
+    trim: true,
+    isLength: {
+      errorMessage: "The field must contain from 1 to 1000 characters",
+      options: {
+        min: 1,
+        max: 1000,
+      },
+    },
+  },
+});
 
 export const postSchema = checkSchema(
   {

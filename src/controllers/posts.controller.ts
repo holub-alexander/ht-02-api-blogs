@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { constants } from "http2";
 import { postsService } from "../services/posts.service";
-import { PostInputModel, PostViewModel } from "../@types";
+import { PaginationAndSortQueryParams, PostInputModel, PostViewModel } from "../@types";
 
-export const getPostsHandler = async (_: Request, res: Response) => {
-  const data = await postsService.getAllPosts();
+export const getPostsHandler = async (req: Request<{}, {}, {}, PaginationAndSortQueryParams>, res: Response) => {
+  const { sortBy, sortDirection, pageNumber, pageSize } = req.query;
+  const data = await postsService.getAllPosts({ sortBy, sortDirection, pageNumber, pageSize });
 
   res.status(constants.HTTP_STATUS_OK).send(data);
 };

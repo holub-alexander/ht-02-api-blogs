@@ -7,12 +7,12 @@ import {
   getPostsHandler,
   updatePostByIdHandler,
 } from "../controllers/posts.controller";
-import { postSchema } from "../utils/schemas/post-schema";
+import { postSchema, postsQuerySchema } from "../utils/schemas/post-schema";
 import { basicAuth } from "../middleware/basic-auth";
 
 const postsRouter = express.Router();
 
-postsRouter.get("/", getPostsHandler);
+postsRouter.get("/", ...postsQuerySchema, getPostsHandler);
 postsRouter.get("/:id", getPostByIdHandler);
 postsRouter.post("/", basicAuth, postSchema, validate, createPostHandler);
 postsRouter.put("/:id", basicAuth, postSchema, validate, updatePostByIdHandler);

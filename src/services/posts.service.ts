@@ -1,18 +1,79 @@
-import { PostInputModel, PostViewModel } from "../@types";
+import { PaginationAndSortQueryParams, Paginator, PostInputModel, PostViewModel, SortDirections } from "../@types";
 import { postsCollection } from "../utils/common/connectDB";
 import { ObjectId, WithId } from "mongodb";
 import { blogsService } from "./blogs.service";
+import { getObjectToSort } from "../utils/common/getObjectToSort";
 
 export const postsService = {
-  getAllPosts: async (): Promise<PostViewModel[]> => {
-    const res = await postsCollection.find<WithId<PostViewModel>>({}).toArray();
-    return res.map((post) => {
-      post.id = post._id.toString();
-      /* @ts-ignore */
-      delete post._id;
+  getAllPosts: async ({
+    pageSize = 10,
+    pageNumber = 1,
+    sortDirection = SortDirections.DESC,
+    sortBy = "",
+  }): Promise<Paginator<PostViewModel[]>> => {
+    const sorting = getObjectToSort({ sortBy, sortDirection });
+    const pageSizeValue = pageSize < 1 ? 1 : pageSize;
 
-      return post;
-    });
+    const totalCount = await postsCollection.find({}).count();
+    const res = await postsCollection
+      .find<WithId<PostViewModel>>({})
+      .skip((+pageNumber - 1) * +pageSizeValue)
+      .limit(+pageSizeValue)
+      .sort(sorting)
+      .toArray();
+
+    return {
+      pageSize: res.length,
+      page: +pageNumber,
+      pagesCount: Math.ceil(totalCount / pageSize),
+      totalCount,
+      items: res.map((post) => ({
+        id: post._id.toString(),
+        title: post.title,
+        shortDescription: post.shortDescription,
+        content: post.content,
+        blogId: post.blogId,
+        blogName: post.blogName,
+        createdAt: post.createdAt,
+      })) as PostViewModel[],
+    };
+  },
+
+  getAllPostsByBlogId: async ({
+    pageSize = 10,
+    pageNumber = 1,
+    sortDirection = SortDirections.DESC,
+    sortBy = "",
+    id,
+  }: PaginationAndSortQueryParams & { id: string }): Promise<Paginator<PostViewModel[]>> => {
+    const sorting = getObjectToSort({ sortBy, sortDirection });
+    const pageSizeValue = pageSize < 1 ? 1 : pageSize;
+
+    const totalCount = await postsCollection.find({ blogId: id }).count();
+    const res = await postsCollection
+      .find<WithId<PostViewModel>>({ blogId: id })
+      .skip((+pageNumber - 1) * +pageSizeValue)
+      .limit(+pageSizeValue)
+      .sort(sorting)
+      .toArray();
+
+    console.log(res);
+
+    return {
+      pageSize: res.length,
+      page: +pageNumber,
+      pagesCount: Math.ceil(totalCount / pageSize),
+      totalCount,
+      items: res.map((post) => ({
+        id: post._id.toString(),
+        title: post.title,
+        shortDescription: post.shortDescription,
+        content: post.content,
+        blogId: post.blogId,
+        blogName: post.blogName,
+        createdAt: post.createdAt,
+      })),
+    };
   },
 
   getPostById: async (postId: string): Promise<PostViewModel | null> => {
