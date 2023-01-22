@@ -25,7 +25,7 @@ export const postsService = {
     return {
       pagesCount: Math.ceil(totalCount / pageSize),
       page: +pageNumber,
-      pageSize: res.length,
+      pageSize: +pageSize,
       totalCount,
       items: res.map((post) => ({
         id: post._id.toString(),
@@ -62,7 +62,7 @@ export const postsService = {
     return {
       pagesCount: Math.ceil(totalCount / pageSize),
       page: +pageNumber,
-      pageSize: res.length,
+      pageSize: +pageSize,
       totalCount,
       items: res.map((post) => ({
         id: post._id.toString(),
