@@ -7,5 +7,5 @@ export const getObjectToSort = ({ sortBy, sortDirection }: SortQueryParams) => {
     return { [sortBy]: sortDirectionValue };
   }
 
-  return {};
+  return { createdAt: sortDirectionValue };
 };

@@ -5,6 +5,7 @@ export const sortQueryParamsSchema = checkSchema(
   {
     sortBy: {
       trim: true,
+      optional: true,
       isLength: {
         errorMessage: "The sortBy parameter must be between 1 and 50 characters",
         options: {
