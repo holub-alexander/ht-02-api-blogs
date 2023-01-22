@@ -14,10 +14,11 @@ export const blogsService = {
   }: BlogsQueryParams): Promise<Paginator<BlogViewModel[]>> => {
     const sorting = getObjectToSort({ sortBy, sortDirection });
     const pageSizeValue = pageSize < 1 ? 1 : pageSize;
+    const filter = { name: { $regex: searchNameTerm, $options: "i" } };
 
-    const totalCount = await blogsCollection.find({}).count();
+    const totalCount = await blogsCollection.countDocuments(filter);
     const res = await blogsCollection
-      .find<WithId<BlogViewModel>>({ name: { $regex: searchNameTerm } })
+      .find<WithId<BlogViewModel>>(filter)
       .skip((+pageNumber - 1) * +pageSizeValue)
       .limit(+pageSizeValue)
       .sort(sorting)
