@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { constants } from "http2";
-import { BlogInputModel, BlogPostInputModel, PaginationAndSortQueryParams } from "../@types";
-import { blogsService } from "../services/blogs.service";
-import { postsService } from "../services/posts.service";
+import { PaginationAndSortQueryParams } from "../../@types";
+import { blogsService } from "../../services/blogs.service";
+import { postsService } from "../../services/posts.service";
+import { BlogInputModel, BlogPostInputModel } from "../request/requestTypes";
 
 export type BlogsQueryParams = PaginationAndSortQueryParams & { searchNameTerm?: string };
 

@@ -1,5 +1,5 @@
 import { checkSchema } from "express-validator";
-import { blogsService } from "../../services/blogs.service";
+import { blogsService } from "../../../services/blogs.service";
 import { paginationQueryParamsSchema } from "./query-params/pagination-schema";
 import { sortQueryParamsSchema } from "./query-params/sort-schema";
 

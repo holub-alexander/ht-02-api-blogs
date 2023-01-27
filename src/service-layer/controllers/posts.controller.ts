@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import { constants } from "http2";
-import { postsService } from "../services/posts.service";
-import { PaginationAndSortQueryParams, PostInputModel, PostViewModel } from "../@types";
+import { postsService } from "../../services/posts.service";
+import { PaginationAndSortQueryParams } from "../../@types";
+import { PostInputModel } from "../request/requestTypes";
+import { PostViewModel } from "../response/responseTypes";
 
 export const getPostsHandler = async (req: Request<{}, {}, {}, PaginationAndSortQueryParams>, res: Response) => {
   const { sortBy, sortDirection, pageNumber, pageSize } = req.query;

@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteAllHandler } from "../controllers/testing.controller";
+import { deleteAllHandler } from "../service-layer/controllers/testing.controller";
 
 const testingRouter = express.Router();
 

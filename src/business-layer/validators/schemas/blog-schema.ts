@@ -1,5 +1,5 @@
 import { checkSchema } from "express-validator";
-import { WEBSITE_URL } from "../constants/regex";
+import { WEBSITE_URL } from "../../../utils/constants/regex";
 import { paginationQueryParamsSchema } from "./query-params/pagination-schema";
 import { sortQueryParamsSchema } from "./query-params/sort-schema";
 

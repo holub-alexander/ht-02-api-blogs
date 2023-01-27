@@ -7,11 +7,11 @@ import {
   getBlogByIdHandler,
   getBlogsHandler,
   updateBlogByIdHandler,
-} from "../controllers/blogs.controller";
-import { validate } from "../middleware/validate";
-import { blogSchema, blogsQuerySchema } from "../utils/schemas/blog-schema";
-import { basicAuth } from "../middleware/basic-auth";
-import { blogPostSchema } from "../utils/schemas/post-schema";
+} from "../service-layer/controllers/blogs.controller";
+import { validate } from "../middleware/custom/validate";
+import { blogSchema, blogsQuerySchema } from "../business-layer/validators/schemas/blog-schema";
+import { basicAuth } from "../middleware/custom/basic-auth";
+import { blogPostSchema } from "../business-layer/validators/schemas/post-schema";
 
 const blogsRouter = express.Router();
 

@@ -1,8 +1,10 @@
-import { BlogInputModel, BlogViewModel, Paginator, SortDirections } from "../@types";
-import { blogsCollection } from "../utils/common/connectDB";
+import { Paginator, SortDirections } from "../@types";
+import { blogsCollection } from "../data-layer/adapters/mongoDB";
 import { ObjectId, WithId } from "mongodb";
 import { getObjectToSort } from "../utils/common/getObjectToSort";
-import { BlogsQueryParams } from "../controllers/blogs.controller";
+import { BlogsQueryParams } from "../service-layer/controllers/blogs.controller";
+import { BlogInputModel } from "../service-layer/request/requestTypes";
+import { BlogViewModel } from "../service-layer/response/responseTypes";
 
 export const blogsService = {
   getAllBlogs: async ({

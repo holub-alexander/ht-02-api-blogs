@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { config } from "../config";
+import { config } from "../../config";
 
 export const basicAuth: RequestHandler = (req, res, next) => {
   const authorizationHeader = req.headers.authorization;

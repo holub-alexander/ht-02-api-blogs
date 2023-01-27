@@ -3,30 +3,6 @@ export enum SortDirections {
   DESC = "desc",
 }
 
-export type BlogInputModel = {
-  name: string;
-  description: string;
-  websiteUrl: string;
-};
-
-export type BlogViewModel = BlogInputModel & {
-  id: string;
-  createdAt: string;
-};
-
-export type PostInputModel = {
-  title: string;
-  shortDescription: string;
-  content: string;
-  blogId: string;
-};
-
-export type PostViewModel = PostInputModel & {
-  id: string;
-  blogName: string;
-  createdAt: string;
-};
-
 export type FieldError = Partial<{
   message: string;
   field: string;
@@ -54,10 +30,4 @@ export type Paginator<T> = {
   pageSize: number;
   totalCount: number;
   items: T;
-};
-
-export type BlogPostInputModel = {
-  title: string;
-  shortDescription: string;
-  content: string;
 };

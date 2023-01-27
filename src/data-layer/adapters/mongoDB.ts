@@ -12,7 +12,7 @@ const db = client.db(process.env.MONGODB_DATABASE_NAME);
 export const blogsCollection = db.collection("blogs");
 export const postsCollection = db.collection("posts");
 
-export const connectDB = async () => {
+export const mongoDB = async () => {
   try {
     await client.connect();
     await client.db("admin").command({ ping: 1 });

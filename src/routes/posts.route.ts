@@ -1,14 +1,14 @@
 import express from "express";
-import { validate } from "../middleware/validate";
+import { validate } from "../middleware/custom/validate";
 import {
   createPostHandler,
   deletePostHandler,
   getPostByIdHandler,
   getPostsHandler,
   updatePostByIdHandler,
-} from "../controllers/posts.controller";
-import { postSchema, postsQuerySchema } from "../utils/schemas/post-schema";
-import { basicAuth } from "../middleware/basic-auth";
+} from "../service-layer/controllers/posts.controller";
+import { postSchema, postsQuerySchema } from "../business-layer/validators/schemas/post-schema";
+import { basicAuth } from "../middleware/custom/basic-auth";
 
 const postsRouter = express.Router();
 

@@ -1,5 +1,5 @@
 import { checkSchema } from "express-validator";
-import { SortDirections } from "../../../@types";
+import { SortDirections } from "../../../../@types";
 
 export const sortQueryParamsSchema = checkSchema(
   {

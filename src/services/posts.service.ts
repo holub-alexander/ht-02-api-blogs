@@ -1,8 +1,10 @@
-import { PaginationAndSortQueryParams, Paginator, PostInputModel, PostViewModel, SortDirections } from "../@types";
-import { postsCollection } from "../utils/common/connectDB";
+import { PaginationAndSortQueryParams, Paginator, SortDirections } from "../@types";
+import { postsCollection } from "../data-layer/adapters/mongoDB";
 import { ObjectId, WithId } from "mongodb";
 import { blogsService } from "./blogs.service";
 import { getObjectToSort } from "../utils/common/getObjectToSort";
+import { PostInputModel } from "../service-layer/request/requestTypes";
+import { PostViewModel } from "../service-layer/response/responseTypes";
 
 export const postsService = {
   getAllPosts: async ({

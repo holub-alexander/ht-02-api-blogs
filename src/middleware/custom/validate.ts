@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ValidationError, validationResult } from "express-validator";
-import { APIErrorResult, FieldError } from "../@types";
+import { APIErrorResult, FieldError } from "../../@types";
 
 export const validate = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req).formatWith(
