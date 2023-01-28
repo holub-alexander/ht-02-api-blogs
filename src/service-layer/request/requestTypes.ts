@@ -16,3 +16,9 @@ export type BlogPostInputModel = {
   shortDescription: string;
   content: string;
 };
+
+export type UserInputModel = {
+  login: string;
+  password: string;
+  email: string;
+};

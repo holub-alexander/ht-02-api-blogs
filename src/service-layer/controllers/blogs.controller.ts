@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { constants } from "http2";
 import { PaginationAndSortQueryParams } from "../../@types";
-import { blogsService } from "../../services/blogs.service";
-import { postsService } from "../../services/posts.service";
+import { blogsService } from "../services/blogs.service";
+import { postsService } from "../services/posts.service";
 import { BlogInputModel, BlogPostInputModel } from "../request/requestTypes";
+import { blogsWriteRepository } from "../../data-layer/repositories/blogs/blogs.write.repository";
 
 export type BlogsQueryParams = PaginationAndSortQueryParams & { searchNameTerm?: string };
 
@@ -47,7 +48,7 @@ export const getAllPostsByBlogId = async (
 };
 
 export const createBlogHandler = async (req: Request<{}, {}, BlogInputModel>, res: Response) => {
-  const data = await blogsService.createBlog(req.body);
+  const data = await blogsWriteRepository.createBlog(req.body);
 
   if (!data) {
     return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
@@ -69,7 +70,7 @@ export const createPostForCurrentBlog = async (req: Request<{ id: string }, {}, 
 };
 
 export const updateBlogByIdHandler = async (req: Request<{ id: string }, {}, BlogInputModel>, res: Response) => {
-  const isUpdated = await blogsService.updateBlogById(req.params.id, req.body);
+  const isUpdated = await blogsWriteRepository.updateBlogById(req.params.id, req.body);
 
   if (!isUpdated) {
     return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
@@ -79,7 +80,7 @@ export const updateBlogByIdHandler = async (req: Request<{ id: string }, {}, Blo
 };
 
 export const deleteBlogHandler = async (req: Request<{ id: string }>, res: Response) => {
-  const isDeleted = await blogsService.deleteBlog(req.params.id);
+  const isDeleted = await blogsWriteRepository.deleteBlog(req.params.id);
 
   res.sendStatus(isDeleted ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);
 };

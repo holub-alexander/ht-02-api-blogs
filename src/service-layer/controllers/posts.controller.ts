@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { constants } from "http2";
-import { postsService } from "../../services/posts.service";
+import { postsService } from "../services/posts.service";
 import { PaginationAndSortQueryParams } from "../../@types";
 import { PostInputModel } from "../request/requestTypes";
 import { PostViewModel } from "../response/responseTypes";
+import { postsWriteRepository } from "../../data-layer/repositories/posts/posts.write.repository";
 
 export const getPostsHandler = async (req: Request<{}, {}, {}, PaginationAndSortQueryParams>, res: Response) => {
   const { sortBy, sortDirection, pageNumber, pageSize } = req.query;
@@ -33,13 +34,13 @@ export const createPostHandler = async (req: Request<{}, {}, PostViewModel>, res
 };
 
 export const updatePostByIdHandler = async (req: Request<{ id: string }, {}, PostInputModel>, res: Response) => {
-  const isUpdated = await postsService.updatePostById(req.params.id, req.body);
+  const isUpdated = await postsWriteRepository.updatePostById(req.params.id, req.body);
 
   res.sendStatus(isUpdated ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);
 };
 
 export const deletePostHandler = async (req: Request<{ id: string }>, res: Response) => {
-  const isDeleted = await postsService.deletePost(req.params.id);
+  const isDeleted = await postsWriteRepository.deletePost(req.params.id);
 
   res.sendStatus(isDeleted ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);
 };
