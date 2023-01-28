@@ -16,8 +16,8 @@ export const usersQueryRepository = {
     const pageSizeValue = pageSize < 1 ? 1 : pageSize;
     const filter = {
       $or: [
-        { searchLoginTerm: { $regex: searchLoginTerm, $options: "i" } },
-        { searchEmailTerm: { $regex: searchEmailTerm, $options: "i" } },
+        { login: { $regex: searchLoginTerm, $options: "i" } },
+        { email: { $regex: searchEmailTerm, $options: "i" } },
       ],
     };
 
