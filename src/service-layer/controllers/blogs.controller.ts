@@ -48,7 +48,7 @@ export const getAllPostsByBlogId = async (
 };
 
 export const createBlogHandler = async (req: Request<{}, {}, BlogInputModel>, res: Response) => {
-  const data = await blogsWriteRepository.createBlog(req.body);
+  const data = await blogsService.createBlog(req.body);
 
   if (!data) {
     return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);

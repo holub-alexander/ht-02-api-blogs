@@ -1,15 +1,15 @@
 import { BlogInputModel } from "../../../service-layer/request/requestTypes";
 import { BlogViewModel } from "../../../service-layer/response/responseTypes";
 import { blogsCollection } from "../../adapters/mongoDB";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { blogsQueryRepository } from "./blogs.query.repository";
 
 export const blogsWriteRepository = {
-  createBlog: async (body: BlogInputModel): Promise<BlogViewModel | null> => {
+  createBlog: async (body: BlogInputModel): Promise<WithId<BlogViewModel> | null> => {
     const data = await blogsCollection.insertOne({ ...body, createdAt: new Date().toISOString() }, {});
 
     if (data.acknowledged) {
-      return blogsQueryRepository.getBlogById(data.insertedId.toString());
+      return blogsQueryRepository.getBlogById<BlogViewModel>(data.insertedId.toString());
     }
 
     return null;

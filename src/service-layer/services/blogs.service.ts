@@ -3,6 +3,9 @@ import { BlogsQueryParams } from "../controllers/blogs.controller";
 import { BlogViewModel } from "../response/responseTypes";
 import { blogsQueryRepository } from "../../data-layer/repositories/blogs/blogs.query.repository";
 import { blogsMapper } from "../../business-layer/mappers/blogs.mapper";
+import { BlogInputModel } from "../request/requestTypes";
+import { blogsWriteRepository } from "../../data-layer/repositories/blogs/blogs.write.repository";
+import { body } from "express-validator";
 
 export const blogsService = {
   getAllBlogs: async ({
@@ -29,10 +32,12 @@ export const blogsService = {
   getBlogById: async (blogId: string): Promise<BlogViewModel | null> => {
     const blog = await blogsQueryRepository.getBlogById<BlogViewModel>(blogId);
 
-    if (blog) {
-      return blogsMapper.mapBlogViewModel(blog);
-    }
+    return blog ? blogsMapper.mapBlogViewModel(blog) : null;
+  },
 
-    return null;
+  createBlog: async (body: BlogInputModel): Promise<BlogViewModel | null> => {
+    const newBlog = await blogsWriteRepository.createBlog(body);
+
+    return newBlog ? blogsMapper.mapBlogViewModel(newBlog) : null;
   },
 };
