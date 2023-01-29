@@ -68,10 +68,10 @@ export const userSchema = checkSchema(
     email: {
       trim: true,
       isLength: {
-        errorMessage: "The field must contain from 3 to 160 characters",
+        errorMessage: "The field must contain from 3 to 200 characters",
         options: {
           min: 3,
-          max: 160,
+          max: 200,
         },
       },
       matches: {

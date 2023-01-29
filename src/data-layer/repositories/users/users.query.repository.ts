@@ -2,6 +2,7 @@ import { Paginator, SortDirections } from "../../../@types";
 import { ObjectId, WithId } from "mongodb";
 import { usersCollection } from "../../adapters/mongoDB";
 import { getObjectToSort } from "../../../utils/common/getObjectToSort";
+import { UserInputModel } from "../../../service-layer/request/requestTypes";
 
 export const usersQueryRepository = {
   getAllUsers: async <T>({
@@ -50,5 +51,13 @@ export const usersQueryRepository = {
     }
 
     return null;
+  },
+
+  getUserByLoginOrEmail: async (loginOrEmail: string) => {
+    const filter = {
+      $or: [{ login: { $regex: loginOrEmail } }, { email: { $regex: loginOrEmail } }],
+    };
+
+    return await usersCollection.findOne<UserInputModel>(filter);
   },
 };

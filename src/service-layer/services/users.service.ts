@@ -4,6 +4,8 @@ import { usersQueryRepository } from "../../data-layer/repositories/users/users.
 import { usersMapper } from "../../business-layer/mappers/users.mapper";
 import { UserInputModel } from "../request/requestTypes";
 import { usersWriteRepository } from "../../data-layer/repositories/users/users.write.repository";
+import bcrypt from "bcrypt";
+import { generateHash } from "../../business-layer/security/generateHash";
 
 export const usersService = {
   getAllUsers: async ({
@@ -30,7 +32,10 @@ export const usersService = {
   },
 
   createUser: async (body: UserInputModel): Promise<UserViewModel | null> => {
-    const newUser = await usersWriteRepository.createUser(body);
+    const passwordSalt = await bcrypt.genSalt(10);
+    const passwordHash = await generateHash(body.password, passwordSalt);
+
+    const newUser = await usersWriteRepository.createUser({ ...body, password: passwordHash });
 
     return newUser ? usersMapper.mapCreatedUserViewModel(newUser) : null;
   },

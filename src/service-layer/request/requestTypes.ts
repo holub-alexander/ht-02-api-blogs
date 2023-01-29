@@ -22,3 +22,8 @@ export type UserInputModel = {
   password: string;
   email: string;
 };
+
+export type LoginInputModel = {
+  loginOrEmail: string;
+  password: string;
+};
