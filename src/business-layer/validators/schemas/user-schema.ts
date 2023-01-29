@@ -26,16 +26,12 @@ export const userQuerySchema = [
       searchEmailTerm: {
         optional: true,
         trim: true,
-        /*isLength: {
+        isLength: {
           errorMessage: "The searchEmailTerm parameter must be between 3 and 160 characters",
           options: {
             min: 3,
-            max: 160,
+            max: 200,
           },
-        },*/
-        matches: {
-          options: EMAIL_REGEX,
-          errorMessage: "Invalid email entered",
         },
       },
     },
