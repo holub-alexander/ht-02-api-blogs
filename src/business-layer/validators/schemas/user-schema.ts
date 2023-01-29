@@ -26,7 +26,7 @@ export const userQuerySchema = [
       searchEmailTerm: {
         optional: true,
         trim: true,
-        isLength: {
+        /*isLength: {
           errorMessage: "The searchEmailTerm parameter must be between 3 and 160 characters",
           options: {
             min: 3,
@@ -36,7 +36,7 @@ export const userQuerySchema = [
         matches: {
           options: EMAIL_REGEX,
           errorMessage: "Invalid email entered",
-        },
+        },*/
       },
     },
     ["query"]
@@ -74,10 +74,10 @@ export const userSchema = checkSchema(
           max: 200,
         },
       },*/
-      /*matches: {
+      matches: {
         options: EMAIL_REGEX,
         errorMessage: "Invalid email entered",
-      },*/
+      },
     },
   },
   ["body"]
