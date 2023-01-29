@@ -32,11 +32,11 @@ export const userQuerySchema = [
             min: 3,
             max: 160,
           },
-        },
+        },*/
         matches: {
           options: EMAIL_REGEX,
           errorMessage: "Invalid email entered",
-        },*/
+        },
       },
     },
     ["query"]
