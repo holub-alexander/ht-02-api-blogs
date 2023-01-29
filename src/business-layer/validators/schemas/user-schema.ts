@@ -74,10 +74,10 @@ export const userSchema = checkSchema(
           max: 200,
         },
       },*/
-      matches: {
+      /*matches: {
         options: EMAIL_REGEX,
         errorMessage: "Invalid email entered",
-      },
+      },*/
     },
   },
   ["body"]
