@@ -1,4 +1,6 @@
 // In TS, interfaces are "open" and can be extended
+import { User } from "./src/@types";
+
 interface Date {
   /**
    * Give a more precise return type to the method `toISOString()`:
@@ -33,3 +35,13 @@ type TDateISOTime = `${THours}:${TMinutes}:${TSeconds}.${TMilliseconds}`;
  *   "Expression produces a union type that is too complex to represent. ts(2590)
  */
 export type TDateISO = `${TDateISODate}T${TDateISOTime}Z`;
+
+export {};
+
+declare global {
+  namespace Express {
+    export interface Request {
+      user: User;
+    }
+  }
+}

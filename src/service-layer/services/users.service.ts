@@ -5,7 +5,7 @@ import { usersMapper } from "../../business-layer/mappers/users.mapper";
 import { UserInputModel } from "../request/requestTypes";
 import { usersWriteRepository } from "../../data-layer/repositories/users/users.write.repository";
 import bcrypt from "bcrypt";
-import { generateHash } from "../../business-layer/security/generateHash";
+import { generateHash } from "../../business-layer/security/generate-hash";
 
 export const usersService = {
   getAllUsers: async ({

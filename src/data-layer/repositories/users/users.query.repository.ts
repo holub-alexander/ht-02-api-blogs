@@ -53,11 +53,11 @@ export const usersQueryRepository = {
     return null;
   },
 
-  getUserByLoginOrEmail: async (loginOrEmail: string) => {
+  getUserByLoginOrEmail: async (loginOrEmail: string): Promise<WithId<UserInputModel> | null> => {
     const filter = {
       $or: [{ login: { $regex: loginOrEmail } }, { email: { $regex: loginOrEmail } }],
     };
 
-    return await usersCollection.findOne<UserInputModel>(filter);
+    return await usersCollection.findOne<WithId<UserInputModel>>(filter);
   },
 };

@@ -1,3 +1,5 @@
+import { JwtPayload } from "jsonwebtoken";
+
 export enum SortDirections {
   ASC = "asc",
   DESC = "desc",
@@ -31,3 +33,5 @@ export type Paginator<T> = {
   totalCount: number;
   items: T;
 };
+
+export type User = string | JwtPayload;
