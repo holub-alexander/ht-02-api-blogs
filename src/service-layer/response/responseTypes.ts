@@ -4,6 +4,7 @@ import { CommentatorInfo } from "../../@types";
 export type BlogViewModel = BlogInputModel & {
   id: string;
   createdAt: string;
+  isMembership: boolean;
 };
 
 export type PostViewModel = PostInputModel & {

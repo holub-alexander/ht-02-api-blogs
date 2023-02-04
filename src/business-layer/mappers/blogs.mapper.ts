@@ -9,6 +9,7 @@ export const blogsMapper = {
       description: blog.description,
       websiteUrl: blog.websiteUrl,
       createdAt: blog.createdAt,
+      isMembership: blog.isMembership,
     })),
 
   mapBlogViewModel: (blog: WithId<BlogViewModel>): BlogViewModel => ({
@@ -17,5 +18,6 @@ export const blogsMapper = {
     description: blog.description,
     websiteUrl: blog.websiteUrl,
     createdAt: blog.createdAt,
+    isMembership: blog.isMembership,
   }),
 };

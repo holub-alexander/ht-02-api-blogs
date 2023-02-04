@@ -6,7 +6,10 @@ import { blogsQueryRepository } from "./blogs.query.repository";
 
 export const blogsWriteRepository = {
   createBlog: async (body: BlogInputModel): Promise<WithId<BlogViewModel> | null> => {
-    const data = await blogsCollection.insertOne({ ...body, createdAt: new Date().toISOString() }, {});
+    const data = await blogsCollection.insertOne(
+      { ...body, createdAt: new Date().toISOString(), isMembership: false },
+      {}
+    );
 
     if (data.acknowledged) {
       return blogsQueryRepository.getBlogById<BlogViewModel>(data.insertedId.toString());
