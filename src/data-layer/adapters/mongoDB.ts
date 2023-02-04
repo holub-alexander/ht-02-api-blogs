@@ -12,6 +12,7 @@ const db = client.db(process.env.MONGODB_DATABASE_NAME);
 export const blogsCollection = db.collection("blogs");
 export const postsCollection = db.collection("posts");
 export const usersCollection = db.collection("users");
+export const commentsCollection = db.collection("comments");
 
 export const mongoDB = async () => {
   try {

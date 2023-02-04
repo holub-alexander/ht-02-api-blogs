@@ -1,4 +1,5 @@
 import { BlogInputModel, PostInputModel, UserInputModel } from "../request/requestTypes";
+import { CommentatorInfo } from "../../@types";
 
 export type BlogViewModel = BlogInputModel & {
   id: string;
@@ -24,4 +25,11 @@ export type MeViewModel = {
   email: string;
   login: string;
   userId: string;
+};
+
+export type CommentViewModel = {
+  id: string;
+  content: string;
+  commentatorInfo: CommentatorInfo;
+  createdAt: string;
 };

@@ -3,6 +3,7 @@ import { ObjectId, WithId } from "mongodb";
 import { usersCollection } from "../../adapters/mongoDB";
 import { getObjectToSort } from "../../../utils/common/getObjectToSort";
 import { UserInputModel } from "../../../service-layer/request/requestTypes";
+import { UserViewModel } from "../../../service-layer/response/responseTypes";
 
 export const usersQueryRepository = {
   getAllUsers: async <T>({

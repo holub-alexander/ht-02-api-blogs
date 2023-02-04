@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { constants } from "http2";
 import { postsService } from "../services/posts.service";
 import { PaginationAndSortQueryParams } from "../../@types";
-import { PostInputModel } from "../request/requestTypes";
+import { CommentInputModel, PostInputModel } from "../request/requestTypes";
 import { PostViewModel } from "../response/responseTypes";
 import { postsWriteRepository } from "../../data-layer/repositories/posts/posts.write.repository";
 
@@ -43,4 +43,37 @@ export const deletePostHandler = async (req: Request<{ id: string }>, res: Respo
   const isDeleted = await postsWriteRepository.deletePost(req.params.id);
 
   res.sendStatus(isDeleted ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);
+};
+
+export const createCommentByCurrentPost = async (
+  req: Request<{ id: string }, {}, CommentInputModel>,
+  res: Response
+) => {
+  const data = await postsService.createCommentByCurrentPost(req.params.id, req.body, req.user.loginOrEmail);
+
+  if (!data) {
+    return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
+  }
+
+  res.status(constants.HTTP_STATUS_CREATED).send(data);
+};
+
+export const getAllCommentsForPostHandler = async (
+  req: Request<{ id: string }, {}, {}, PaginationAndSortQueryParams>,
+  res: Response
+) => {
+  const { sortBy, sortDirection, pageNumber, pageSize } = req.query;
+  const data = await postsService.getAllCommentsForPost({
+    sortBy,
+    sortDirection,
+    pageNumber,
+    pageSize,
+    postId: req.params.id,
+  });
+
+  if (!data) {
+    return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
+  }
+
+  res.status(constants.HTTP_STATUS_OK).send(data);
 };

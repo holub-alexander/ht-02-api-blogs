@@ -34,4 +34,14 @@ export type Paginator<T> = {
   items: T;
 };
 
-export type User = string | JwtPayload;
+export type User = JwtPayload & { loginOrEmail: string };
+
+export type CommentatorInfo = {
+  userId: string;
+  userLogin: string;
+};
+
+export type ErrorMessage = {
+  type: string;
+  message: string;
+};

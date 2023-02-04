@@ -3,11 +3,15 @@ import { postsCollection } from "../../data-layer/adapters/mongoDB";
 import { ObjectId, WithId } from "mongodb";
 import { blogsService } from "./blogs.service";
 import { getObjectToSort } from "../../utils/common/getObjectToSort";
-import { PostInputModel } from "../request/requestTypes";
+import { CommentInputModel, PostInputModel } from "../request/requestTypes";
 import { PostViewModel } from "../response/responseTypes";
 import { postsQueryRepository } from "../../data-layer/repositories/posts/posts.query.repository";
 import { postsMapper } from "../../business-layer/mappers/posts.mapper";
 import { postsWriteRepository } from "../../data-layer/repositories/posts/posts.write.repository";
+import { commentsWriteRepository } from "../../data-layer/repositories/comments/comments.write.repository";
+import { usersQueryRepository } from "../../data-layer/repositories/users/users.query.repository";
+import { commentMapper } from "../../business-layer/mappers/comment.mapper";
+import { commentsQueryRepository } from "../../data-layer/repositories/comments/comments.query.repository";
 
 export const postsService = {
   getAllPosts: async ({
@@ -49,5 +53,44 @@ export const postsService = {
     const newPost = await postsWriteRepository.createPost(body);
 
     return newPost ? postsMapper.mapPostViewModel(newPost) : null;
+  },
+
+  createCommentByCurrentPost: async (postId: string, body: CommentInputModel, loginOrEmail: string) => {
+    const findPost = await postsQueryRepository.getPostById<PostViewModel>(postId);
+    const user = await usersQueryRepository.getUserByLoginOrEmail(loginOrEmail);
+
+    if (!findPost || !user) {
+      return null;
+    }
+
+    const data = await commentsWriteRepository.createCommentByCurrentPost(postId, body, user);
+    return data ? commentMapper.mapCommentViewModel(data) : null;
+  },
+
+  getAllCommentsForPost: async ({
+    pageSize = 10,
+    pageNumber = 1,
+    sortDirection = SortDirections.DESC,
+    sortBy = "",
+    postId,
+  }: PaginationAndSortQueryParams & { postId: string }) => {
+    const post = await postsQueryRepository.getPostById<PostViewModel>(postId);
+
+    if (!post) {
+      return null;
+    }
+
+    const data = await commentsQueryRepository.getAllCommentsForPost({
+      pageSize,
+      pageNumber,
+      sortBy,
+      sortDirection,
+      postId,
+    });
+
+    return {
+      ...data,
+      items: commentMapper.mapCommentsViewModel(data.items),
+    };
   },
 };

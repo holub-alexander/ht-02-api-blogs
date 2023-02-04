@@ -9,9 +9,9 @@ export const verifyJwtToken: RequestHandler = async (req: Request, res, next) =>
   }
 
   try {
-    if (req?.user) {
-      req.user = await jwt.verify(token, process.env.JWT_TOKEN_SECRET_KEY as string);
-    }
+    // @ts-ignore
+    req.user = await jwt.verify(token, process.env.JWT_TOKEN_SECRET_KEY as string);
+
     next();
   } catch (err) {
     return res.sendStatus(401);

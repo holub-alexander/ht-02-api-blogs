@@ -25,7 +25,6 @@ export const authLoginHandler = async (
 };
 
 export const authMeHandler = async (req: Request, res: Response) => {
-  // @ts-ignore
   const userMe = await authService.getInformationAboutUser(req.user.loginOrEmail);
 
   if (!userMe) {
