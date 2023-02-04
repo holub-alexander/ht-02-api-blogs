@@ -16,7 +16,7 @@ export const authLoginHandler = async (
   });
 
   if (isCorrectCredentials) {
-    const token = jwtToken({ loginOrEmail: req.body.loginOrEmail });
+    const token = await jwtToken({ loginOrEmail: req.body.loginOrEmail });
 
     return res.status(constants.HTTP_STATUS_OK).send({ accessToken: token });
   }
