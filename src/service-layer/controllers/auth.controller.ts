@@ -10,18 +10,23 @@ export const authLoginHandler = async (
   req: Request<{}, {}, LoginInputModel>,
   res: Response<LoginSuccessViewModel | number>
 ) => {
-  const isCorrectCredentials = await authService.checkCredentials({
-    loginOrEmail: req.body.loginOrEmail,
-    password: req.body.password,
-  });
+  try {
+    const isCorrectCredentials = await authService.checkCredentials({
+      loginOrEmail: req.body.loginOrEmail,
+      password: req.body.password,
+    });
 
-  if (isCorrectCredentials) {
-    const token = await jwtToken({ loginOrEmail: req.body.loginOrEmail });
+    if (isCorrectCredentials) {
+      const token = await jwtToken({ loginOrEmail: req.body.loginOrEmail });
 
-    return res.status(constants.HTTP_STATUS_OK).send({ accessToken: token });
+      return res.status(constants.HTTP_STATUS_OK).send({ accessToken: token });
+    }
+
+    return res.sendStatus(401);
+  } catch (err) {
+    console.log("ERR", req.body.loginOrEmail, req.body.password);
+    console.log("err 2", err);
   }
-
-  return res.sendStatus(401);
 };
 
 export const authMeHandler = async (req: Request, res: Response) => {
