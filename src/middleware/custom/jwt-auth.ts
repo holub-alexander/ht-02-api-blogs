@@ -1,5 +1,6 @@
 import { RequestHandler, Request } from "express";
 import jwt from "jsonwebtoken";
+import { User } from "../../@types";
 
 export const verifyJwtToken: RequestHandler = async (req: Request, res, next) => {
   const token = req.body.token || req.query.token || req.headers.authorization?.replace(/^Bearer\s/, "");
@@ -9,8 +10,7 @@ export const verifyJwtToken: RequestHandler = async (req: Request, res, next) =>
   }
 
   try {
-    // @ts-ignore
-    req.user = await jwt.verify(token, process.env.JWT_TOKEN_SECRET_KEY as string);
+    req.user = (await jwt.verify(token, process.env.JWT_TOKEN_SECRET_KEY as string)) as User;
 
     next();
   } catch (err) {
