@@ -1,4 +1,4 @@
-import { Paginator, SortDirections } from "../../@types";
+import { Paginator, SortDirections, UserAccountDBType } from "../../@types";
 import { UserViewModel } from "../response/responseTypes";
 import { usersQueryRepository } from "../../data-layer/repositories/users/users.query.repository";
 import { usersMapper } from "../../business-layer/mappers/users.mapper";
@@ -16,7 +16,7 @@ export const usersService = {
     searchEmailTerm = "",
     searchLoginTerm = "",
   }): Promise<Paginator<UserViewModel[]>> => {
-    const res = await usersQueryRepository.getAllUsers<UserViewModel>({
+    const res = await usersQueryRepository.getAllUsers<UserAccountDBType>({
       pageSize,
       pageNumber,
       sortBy,
@@ -35,7 +35,16 @@ export const usersService = {
     const passwordSalt = await bcrypt.genSalt(10);
     const passwordHash = await generateHash(body.password, passwordSalt);
 
-    const newUser = await usersWriteRepository.createUser({ ...body, password: passwordHash });
+    const userData = {
+      accountData: { ...body, password: passwordHash, createdAt: new Date().toISOString() },
+      emailConfirmation: {
+        confirmationCode: null,
+        expirationDate: null,
+        isConfirmed: true,
+      },
+    };
+
+    const newUser = await usersWriteRepository.createUser(userData);
 
     return newUser ? usersMapper.mapCreatedUserViewModel(newUser) : null;
   },

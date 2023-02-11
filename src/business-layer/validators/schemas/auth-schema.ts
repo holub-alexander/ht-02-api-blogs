@@ -40,3 +40,32 @@ export const authLoginSchema = checkSchema(
   },
   ["body"]
 );
+
+export const confirmRegistrationSchema = checkSchema(
+  {
+    code: {
+      trim: true,
+      isLength: {
+        errorMessage: "The field must contain from 5 to 50 characters",
+        options: {
+          min: 5,
+          max: 50,
+        },
+      },
+    },
+  },
+  ["body"]
+);
+
+export const registrationEmailResendingSchema = checkSchema(
+  {
+    email: {
+      trim: true,
+      matches: {
+        options: EMAIL_REGEX,
+        errorMessage: "Invalid email entered",
+      },
+    },
+  },
+  ["body"]
+);

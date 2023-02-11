@@ -1,10 +1,16 @@
 import { Request, Response } from "express";
-import { LoginInputModel } from "../request/requestTypes";
+import {
+  LoginInputModel,
+  RegistrationConfirmationCodeModel,
+  RegistrationEmailResending,
+  UserInputModel,
+} from "../request/requestTypes";
 import { constants } from "http2";
 import { authService } from "../services/auth.service";
 
 import { LoginSuccessViewModel } from "../response/responseTypes";
 import { jwtToken } from "../../business-layer/security/jwt-token";
+import { APIErrorResult } from "../../@types";
 
 export const authLoginHandler = async (
   req: Request<{}, {}, LoginInputModel>,
@@ -22,6 +28,63 @@ export const authLoginHandler = async (
   }
 
   return res.sendStatus(401);
+};
+
+export const authRegistrationHandler = async (req: Request<{}, {}, UserInputModel>, res: Response) => {
+  const data = await authService.registrationUser(req.body);
+
+  if (!data) {
+    return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({
+      errorsMessages: [
+        {
+          message: "User with this e-mail already exists",
+          field: "email",
+        },
+      ],
+    } as APIErrorResult);
+  }
+
+  return res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
+};
+
+export const authConfirmRegistrationHandler = async (
+  req: Request<{}, {}, RegistrationConfirmationCodeModel>,
+  res: Response
+) => {
+  const user = await authService.confirmRegistration(req.body);
+
+  if (!user) {
+    return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({
+      errorsMessages: [
+        {
+          message: "Confirmation code is incorrect, expired or already been applied",
+          field: "code",
+        },
+      ],
+    } as APIErrorResult);
+  }
+
+  return res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
+};
+
+export const authRegistrationEmailResendingHandler = async (
+  req: Request<{}, {}, RegistrationEmailResending>,
+  res: Response
+) => {
+  const isResendConfirmationCode = await authService.registrationEmailResending(req.body);
+
+  if (!isResendConfirmationCode) {
+    return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({
+      errorsMessages: [
+        {
+          message: "Email already verified or no email",
+          field: "email",
+        },
+      ],
+    } as APIErrorResult);
+  }
+
+  return res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
 };
 
 export const authMeHandler = async (req: Request, res: Response) => {

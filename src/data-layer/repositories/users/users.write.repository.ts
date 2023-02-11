@@ -1,18 +1,39 @@
-import { UserInputModel } from "../../../service-layer/request/requestTypes";
-import { UserViewModel } from "../../../service-layer/response/responseTypes";
 import { usersCollection } from "../../adapters/mongoDB";
 import { usersQueryRepository } from "./users.query.repository";
 import { ObjectId, WithId } from "mongodb";
+import { UserAccountDBType } from "../../../@types";
 
 export const usersWriteRepository = {
-  createUser: async (body: UserInputModel): Promise<WithId<UserViewModel> | null> => {
-    const data = await usersCollection.insertOne({ ...body, createdAt: new Date().toISOString() }, {});
+  createUser: async (data: UserAccountDBType): Promise<WithId<UserAccountDBType> | null> => {
+    const res = await usersCollection.insertOne(data, {});
 
-    if (data.acknowledged) {
-      return usersQueryRepository.getUserById<UserViewModel>(data.insertedId.toString());
+    if (res.acknowledged) {
+      return usersQueryRepository.getUserById<UserAccountDBType>(res.insertedId.toString());
     }
 
     return null;
+  },
+
+  userConfirmRegistration: async (_id: ObjectId): Promise<boolean> => {
+    const res = await usersCollection.updateOne({ _id }, { $set: { "emailConfirmation.isConfirmed": true } });
+    return res.modifiedCount === 1;
+  },
+
+  updateConfirmationCode: async (
+    _id: ObjectId,
+    { confirmationCode, expirationDate }: { confirmationCode: string; expirationDate: Date }
+  ): Promise<boolean> => {
+    const res = await usersCollection.updateOne(
+      { _id },
+      {
+        $set: {
+          "emailConfirmation.confirmationCode": confirmationCode,
+          "emailConfirmation.expirationDate": expirationDate,
+        },
+      }
+    );
+
+    return res.modifiedCount === 1;
   },
 
   deleteUser: async (userId: string): Promise<boolean> => {

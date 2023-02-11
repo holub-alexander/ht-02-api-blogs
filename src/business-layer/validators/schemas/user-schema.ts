@@ -50,6 +50,10 @@ export const userSchema = checkSchema(
           max: 10,
         },
       },
+      matches: {
+        options: LOGIN_REGEX,
+        errorMessage: "Invalid login entered",
+      },
     },
     password: {
       trim: true,
@@ -63,13 +67,6 @@ export const userSchema = checkSchema(
     },
     email: {
       trim: true,
-      /*isLength: {
-        errorMessage: "The field must contain from 3 to 200 characters",
-        options: {
-          min: 3,
-          max: 200,
-        },
-      },*/
       matches: {
         options: EMAIL_REGEX,
         errorMessage: "Invalid email entered",

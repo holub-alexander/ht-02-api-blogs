@@ -1,8 +1,4 @@
 import { PaginationAndSortQueryParams, Paginator, SortDirections } from "../../@types";
-import { postsCollection } from "../../data-layer/adapters/mongoDB";
-import { ObjectId, WithId } from "mongodb";
-import { blogsService } from "./blogs.service";
-import { getObjectToSort } from "../../utils/common/getObjectToSort";
 import { CommentInputModel, PostInputModel } from "../request/requestTypes";
 import { PostViewModel } from "../response/responseTypes";
 import { postsQueryRepository } from "../../data-layer/repositories/posts/posts.query.repository";

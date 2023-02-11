@@ -1,4 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
+import { UserInputModel } from "../service-layer/request/requestTypes";
 
 export enum SortDirections {
   ASC = "asc",
@@ -45,3 +46,16 @@ export type ErrorMessage = {
   type: string;
   message: string;
 };
+
+export type UserAccountDBType = {
+  accountData: UserInputModel & { createdAt: string };
+  emailConfirmation: {
+    confirmationCode: string | null;
+    expirationDate: Date | null;
+    isConfirmed: boolean;
+  };
+};
+
+export enum ErrorTypes {
+  USER_EXISTS = "USER_EXISTS",
+}

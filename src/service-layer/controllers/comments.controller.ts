@@ -24,7 +24,7 @@ export const deleteCommentByIdHandler = async (req: Request<{ id: string }>, res
     return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
   }
 
-  if (user.login !== comment.commentatorInfo.userLogin) {
+  if (user.accountData.login !== comment.commentatorInfo.userLogin) {
     return res.sendStatus(constants.HTTP_STATUS_FORBIDDEN);
   }
 
@@ -45,7 +45,7 @@ export const updateCommentByIdHandler = async (req: Request<{ id: string }, {}, 
     return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
   }
 
-  if (user.login !== comment.commentatorInfo.userLogin) {
+  if (user.accountData.login !== comment.commentatorInfo.userLogin) {
     return res.sendStatus(constants.HTTP_STATUS_FORBIDDEN);
   }
 

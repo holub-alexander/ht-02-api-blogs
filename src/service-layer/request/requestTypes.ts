@@ -31,3 +31,11 @@ export type LoginInputModel = {
 export type CommentInputModel = {
   content: string;
 };
+
+export type RegistrationConfirmationCodeModel = {
+  code: string;
+};
+
+export type RegistrationEmailResending = {
+  email: string;
+};

@@ -1,15 +1,16 @@
 import { CommentInputModel, UserInputModel } from "../../../service-layer/request/requestTypes";
 import { ObjectId, WithId } from "mongodb";
-import { CommentViewModel, UserViewModel } from "../../../service-layer/response/responseTypes";
+import { CommentViewModel } from "../../../service-layer/response/responseTypes";
 import { commentsCollection, postsCollection } from "../../adapters/mongoDB";
 import { commentsQueryRepository } from "./comments.query.repository";
+import { UserAccountDBType } from "../../../@types";
 
 export const commentsWriteRepository = {
-  createComment: async (body: CommentInputModel, user: WithId<UserInputModel>, postId: ObjectId) => {
+  createComment: async (body: CommentInputModel, user: WithId<UserAccountDBType>, postId: ObjectId) => {
     const data = await commentsCollection.insertOne({
       postId,
       content: body.content,
-      commentatorInfo: { userId: user._id.toString(), userLogin: user.login },
+      commentatorInfo: { userId: user._id.toString(), userLogin: user.accountData.login },
       createdAt: new Date().toISOString(),
     });
 
@@ -19,7 +20,7 @@ export const commentsWriteRepository = {
   createCommentByCurrentPost: async (
     postId: string,
     body: CommentInputModel,
-    user: WithId<UserInputModel>
+    user: WithId<UserAccountDBType>
   ): Promise<WithId<CommentViewModel> | null> => {
     const isValidId = ObjectId.isValid(postId);
 

@@ -1,4 +1,4 @@
-import { Paginator, SortDirections } from "../../../@types";
+import { Paginator, SortDirections, UserAccountDBType } from "../../../@types";
 import { ObjectId, WithId } from "mongodb";
 import { usersCollection } from "../../adapters/mongoDB";
 import { getObjectToSort } from "../../../utils/common/getObjectToSort";
@@ -18,8 +18,8 @@ export const usersQueryRepository = {
     const pageSizeValue = pageSize < 1 ? 1 : pageSize;
     const filter = {
       $or: [
-        { login: { $regex: searchLoginTerm, $options: "i" } },
-        { email: { $regex: searchEmailTerm, $options: "i" } },
+        { "accountData.login": { $regex: searchLoginTerm, $options: "i" } },
+        { "accountData.email": { $regex: searchEmailTerm, $options: "i" } },
       ],
     };
 
@@ -54,11 +54,15 @@ export const usersQueryRepository = {
     return null;
   },
 
-  getUserByLoginOrEmail: async (loginOrEmail: string): Promise<WithId<UserInputModel> | null> => {
+  getUserByLoginOrEmail: async (loginOrEmail: string): Promise<WithId<UserAccountDBType> | null> => {
     const filter = {
-      $or: [{ login: { $regex: loginOrEmail } }, { email: { $regex: loginOrEmail } }],
+      $or: [{ "accountData.login": { $regex: loginOrEmail } }, { "accountData.email": { $regex: loginOrEmail } }],
     };
 
-    return await usersCollection.findOne<WithId<UserInputModel>>(filter);
+    return await usersCollection.findOne<WithId<UserAccountDBType>>(filter);
+  },
+
+  getUserByConfirmationCode: async (code: string): Promise<WithId<UserAccountDBType> | null> => {
+    return await usersCollection.findOne<WithId<UserAccountDBType>>({ "emailConfirmation.confirmationCode": code });
   },
 };
