@@ -60,13 +60,11 @@ export const usersQueryRepository = {
     return await usersCollection.findOne<WithId<UserAccountDBType>>(filter);
   },
 
-  getUserByLoginOrEmail: async (login: string, email: string): Promise<WithId<UserAccountDBType> | null> => {
-    const filter = {
-      $or: [{ "accountData.login": { $regex: login } }, { "accountData.email": { $regex: email } }],
-    };
+  getUserByLogin: async (login: string): Promise<WithId<UserAccountDBType> | null> =>
+    usersCollection.findOne<WithId<UserAccountDBType>>({ "accountData.login": login }),
 
-    return await usersCollection.findOne<WithId<UserAccountDBType>>(filter);
-  },
+  getUserByEmail: async (email: string): Promise<WithId<UserAccountDBType> | null> =>
+    usersCollection.findOne<WithId<UserAccountDBType>>({ "accountData.email": email }),
 
   getUserByConfirmationCode: async (code: string): Promise<WithId<UserAccountDBType> | null> => {
     return await usersCollection.findOne<WithId<UserAccountDBType>>({ "emailConfirmation.confirmationCode": code });

@@ -31,20 +31,15 @@ export const authLoginHandler = async (
 };
 
 export const authRegistrationHandler = async (req: Request<{}, {}, UserInputModel>, res: Response) => {
-  const data = await authService.registrationUser(req.body);
+  try {
+    await authService.registrationUser(req.body);
 
-  if (!data) {
+    return res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
+  } catch (err: any) {
     return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({
-      errorsMessages: [
-        {
-          message: "User with this login already exists",
-          field: "login",
-        },
-      ],
+      errorsMessages: [err.data],
     } as APIErrorResult);
   }
-
-  return res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
 };
 
 export const authConfirmRegistrationHandler = async (

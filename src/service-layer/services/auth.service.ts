@@ -14,6 +14,7 @@ import { generateHash } from "../../business-layer/security/generate-hash";
 import { usersWriteRepository } from "../../data-layer/repositories/users/users.write.repository";
 import { UserAccountDBType } from "../../@types";
 import { WithId } from "mongodb";
+import { CustomError } from "../../utils/classes/CustomError";
 
 export const authService = {
   checkCredentials: async ({ loginOrEmail, password }: LoginInputModel): Promise<boolean> => {
@@ -33,10 +34,15 @@ export const authService = {
   },
 
   registrationUser: async (body: UserInputModel): Promise<WithId<UserAccountDBType> | null> => {
-    const user = await usersQueryRepository.getUserByLoginOrEmail(body.login, body.email);
+    const findUserByLogin = await usersQueryRepository.getUserByLogin(body.login);
+    const findUserByEmail = await usersQueryRepository.getUserByEmail(body.email);
 
-    if (user) {
-      return null;
+    if (findUserByLogin) {
+      throw new CustomError("User with this login already exists", "login");
+    }
+
+    if (findUserByEmail) {
+      throw new CustomError("User with this email already exists", "email");
     }
 
     const passwordSalt = await bcrypt.genSalt(10);
