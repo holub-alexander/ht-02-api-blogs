@@ -53,7 +53,7 @@ export const postsService = {
 
   createCommentByCurrentPost: async (postId: string, body: CommentInputModel, loginOrEmail: string) => {
     const findPost = await postsQueryRepository.getPostById<PostViewModel>(postId);
-    const user = await usersQueryRepository.getUserByLoginOrEmail(loginOrEmail);
+    const user = await usersQueryRepository.getUserByLoginOrEmailOnly(loginOrEmail);
 
     if (!findPost || !user) {
       return null;

@@ -2,8 +2,6 @@ import { Paginator, SortDirections, UserAccountDBType } from "../../../@types";
 import { ObjectId, WithId } from "mongodb";
 import { usersCollection } from "../../adapters/mongoDB";
 import { getObjectToSort } from "../../../utils/common/getObjectToSort";
-import { UserInputModel } from "../../../service-layer/request/requestTypes";
-import { UserViewModel } from "../../../service-layer/response/responseTypes";
 
 export const usersQueryRepository = {
   getAllUsers: async <T>({
@@ -54,9 +52,17 @@ export const usersQueryRepository = {
     return null;
   },
 
-  getUserByLoginOrEmail: async (loginOrEmail: string): Promise<WithId<UserAccountDBType> | null> => {
+  getUserByLoginOrEmailOnly: async (loginOrEmail: string): Promise<WithId<UserAccountDBType> | null> => {
     const filter = {
       $or: [{ "accountData.login": { $regex: loginOrEmail } }, { "accountData.email": { $regex: loginOrEmail } }],
+    };
+
+    return await usersCollection.findOne<WithId<UserAccountDBType>>(filter);
+  },
+
+  getUserByLoginOrEmail: async (login: string, email: string): Promise<WithId<UserAccountDBType> | null> => {
+    const filter = {
+      $or: [{ "accountData.login": { $regex: login } }, { "accountData.email": { $regex: email } }],
     };
 
     return await usersCollection.findOne<WithId<UserAccountDBType>>(filter);

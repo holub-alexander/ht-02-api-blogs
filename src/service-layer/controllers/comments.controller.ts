@@ -17,7 +17,7 @@ export const getCommentByIdHandler = async (req: Request<{ id: string }>, res: R
 };
 
 export const deleteCommentByIdHandler = async (req: Request<{ id: string }>, res: Response) => {
-  const user = await usersQueryRepository.getUserByLoginOrEmail(req.user.loginOrEmail);
+  const user = await usersQueryRepository.getUserByLoginOrEmailOnly(req.user.loginOrEmail);
   const comment = await commentsQueryRepository.getCommentById(req.params.id);
 
   if (!user || !comment) {
@@ -37,7 +37,7 @@ export const deleteCommentByIdHandler = async (req: Request<{ id: string }>, res
 
 export const updateCommentByIdHandler = async (req: Request<{ id: string }, {}, CommentInputModel>, res: Response) => {
   const comment = await commentsQueryRepository.getCommentById(req.params.id);
-  const user = await usersQueryRepository.getUserByLoginOrEmail(req.user.loginOrEmail);
+  const user = await usersQueryRepository.getUserByLoginOrEmailOnly(req.user.loginOrEmail);
 
   console.log(comment, user);
 

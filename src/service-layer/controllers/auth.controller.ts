@@ -37,8 +37,8 @@ export const authRegistrationHandler = async (req: Request<{}, {}, UserInputMode
     return res.status(constants.HTTP_STATUS_BAD_REQUEST).send({
       errorsMessages: [
         {
-          message: "User with this e-mail already exists",
-          field: "email",
+          message: "User with this login already exists",
+          field: "login",
         },
       ],
     } as APIErrorResult);

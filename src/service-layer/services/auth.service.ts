@@ -12,12 +12,12 @@ import { v4 as uuidv4 } from "uuid";
 import add from "date-fns/add";
 import { generateHash } from "../../business-layer/security/generate-hash";
 import { usersWriteRepository } from "../../data-layer/repositories/users/users.write.repository";
-import { ErrorMessage, UserAccountDBType } from "../../@types";
+import { UserAccountDBType } from "../../@types";
 import { WithId } from "mongodb";
 
 export const authService = {
   checkCredentials: async ({ loginOrEmail, password }: LoginInputModel): Promise<boolean> => {
-    const user = await usersQueryRepository.getUserByLoginOrEmail(loginOrEmail);
+    const user = await usersQueryRepository.getUserByLoginOrEmailOnly(loginOrEmail);
 
     if (!user) return false;
 
@@ -25,15 +25,15 @@ export const authService = {
   },
 
   getInformationAboutUser: async (loginOrEmail = "") => {
-    const user = await usersQueryRepository.getUserByLoginOrEmail(loginOrEmail);
+    const user = await usersQueryRepository.getUserByLoginOrEmailOnly(loginOrEmail);
 
     if (!user) return false;
 
     return authMapper.mapMeViewModel(user);
   },
 
-  registrationUser: async (body: UserInputModel): Promise<ErrorMessage | WithId<UserAccountDBType> | null> => {
-    const user = await usersQueryRepository.getUserByLoginOrEmail(body.email);
+  registrationUser: async (body: UserInputModel): Promise<WithId<UserAccountDBType> | null> => {
+    const user = await usersQueryRepository.getUserByLoginOrEmail(body.login, body.email);
 
     if (user) {
       return null;
@@ -80,7 +80,7 @@ export const authService = {
   },
 
   registrationEmailResending: async (body: RegistrationEmailResending) => {
-    const user = await usersQueryRepository.getUserByLoginOrEmail(body.email);
+    const user = await usersQueryRepository.getUserByLoginOrEmailOnly(body.email);
 
     console.log(user);
 
