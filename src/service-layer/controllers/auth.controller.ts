@@ -11,23 +11,30 @@ import { authService } from "../services/auth.service";
 import { LoginSuccessViewModel } from "../response/responseTypes";
 import { jwtToken } from "../../business-layer/security/jwt-token";
 import { APIErrorResult } from "../../@types";
+import { usersQueryRepository } from "../../data-layer/repositories/users/users.query.repository";
+import { usersWriteRepository } from "../../data-layer/repositories/users/users.write.repository";
 
 export const authLoginHandler = async (
   req: Request<{}, {}, LoginInputModel>,
   res: Response<LoginSuccessViewModel | number>
 ) => {
+  const user = await usersQueryRepository.getUserByLoginOrEmailOnly(req.body.loginOrEmail);
   const isCorrectCredentials = await authService.checkCredentials({
     loginOrEmail: req.body.loginOrEmail,
     password: req.body.password,
   });
 
-  if (isCorrectCredentials) {
-    const token = await jwtToken({ loginOrEmail: req.body.loginOrEmail });
-
-    return res.status(constants.HTTP_STATUS_OK).send({ accessToken: token });
+  if (!isCorrectCredentials || !user) {
+    return res.sendStatus(401);
   }
 
-  return res.sendStatus(401);
+  const token = await jwtToken({ login: user.accountData.login });
+  const refreshToken = await jwtToken({ login: user.accountData.login });
+
+  await usersWriteRepository.addRefreshTokenForUser(user._id, refreshToken);
+
+  res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
+  return res.status(constants.HTTP_STATUS_OK).send({ accessToken: token });
 };
 
 export const authRegistrationHandler = async (req: Request<{}, {}, UserInputModel>, res: Response) => {
@@ -90,4 +97,20 @@ export const authMeHandler = async (req: Request, res: Response) => {
   }
 
   return res.status(constants.HTTP_STATUS_OK).send(userMe);
+};
+
+export const authRefreshTokenHandler = async (req: Request, res: Response) => {
+  if (!req.cookies.refreshToken) {
+    return res.sendStatus(401);
+  }
+
+  const newTokens = await authService.updateRefreshToken(req.cookies.refreshToken);
+
+  if (!newTokens) {
+    return res.sendStatus(401);
+  }
+
+  res.cookie("refreshToken", newTokens.refreshToken, { httpOnly: true, secure: true });
+
+  return res.status(constants.HTTP_STATUS_OK).send({ accessToken: newTokens.accessToken });
 };

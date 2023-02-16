@@ -66,7 +66,9 @@ export const usersQueryRepository = {
   getUserByEmail: async (email: string): Promise<WithId<UserAccountDBType> | null> =>
     usersCollection.findOne<WithId<UserAccountDBType>>({ "accountData.email": email }),
 
-  getUserByConfirmationCode: async (code: string): Promise<WithId<UserAccountDBType> | null> => {
-    return await usersCollection.findOne<WithId<UserAccountDBType>>({ "emailConfirmation.confirmationCode": code });
-  },
+  getUserByConfirmationCode: async (code: string): Promise<WithId<UserAccountDBType> | null> =>
+    usersCollection.findOne<WithId<UserAccountDBType>>({ "emailConfirmation.confirmationCode": code }),
+
+  getUserByRefreshToken: async (refreshToken: string): Promise<WithId<UserAccountDBType> | null> =>
+    usersCollection.findOne<WithId<UserAccountDBType>>({ refreshToken }),
 };

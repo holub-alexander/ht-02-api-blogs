@@ -15,6 +15,7 @@ import { usersWriteRepository } from "../../data-layer/repositories/users/users.
 import { UserAccountDBType } from "../../@types";
 import { WithId } from "mongodb";
 import { CustomError } from "../../utils/classes/CustomError";
+import { jwtToken } from "../../business-layer/security/jwt-token";
 
 export const authService = {
   checkCredentials: async ({ loginOrEmail, password }: LoginInputModel): Promise<boolean> => {
@@ -108,5 +109,20 @@ export const authService = {
 
       return true;
     }
+  },
+
+  updateRefreshToken: async (refreshToken: string): Promise<null | { accessToken: string; refreshToken: string }> => {
+    const user = await usersQueryRepository.getUserByRefreshToken(refreshToken);
+
+    if (!user) {
+      return null;
+    }
+
+    const token = await jwtToken({ login: user.accountData.login });
+    const newRefreshToken = await jwtToken({ login: user.accountData.login });
+
+    await usersWriteRepository.addRefreshTokenForUser(user._id, newRefreshToken);
+
+    return { accessToken: token, refreshToken: newRefreshToken };
   },
 };

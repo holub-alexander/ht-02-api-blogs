@@ -9,6 +9,7 @@ import {
   authConfirmRegistrationHandler,
   authLoginHandler,
   authMeHandler,
+  authRefreshTokenHandler,
   authRegistrationEmailResendingHandler,
   authRegistrationHandler,
 } from "../service-layer/controllers/auth.controller";
@@ -26,6 +27,7 @@ authRouter.post(
   validate,
   authRegistrationEmailResendingHandler
 );
+authRouter.post("/refresh-token", authRefreshTokenHandler);
 authRouter.get("/me", verifyJwtToken, authMeHandler);
 
 export default authRouter;
