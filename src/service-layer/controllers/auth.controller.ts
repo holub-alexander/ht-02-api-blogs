@@ -28,14 +28,16 @@ export const authLoginHandler = async (
     return res.sendStatus(401);
   }
 
-  const accessToken = await jwtToken({ login: user.accountData.login }, process.env.ACCESS_TOKEN_PRIVATE_KEY as string);
+  const accessToken = await jwtToken(
+    { login: user.accountData.login },
+    process.env.ACCESS_TOKEN_PRIVATE_KEY as string,
+    "10s"
+  );
   const refreshToken = await jwtToken(
     { login: user.accountData.login },
-    process.env.REFRESH_TOKEN_PRIVATE_KEY as string
+    process.env.REFRESH_TOKEN_PRIVATE_KEY as string,
+    "20s"
   );
-
-  console.log("accessToken", accessToken);
-  console.log("refreshToken", refreshToken);
 
   await usersWriteRepository.addTokensForUser(user._id, accessToken, refreshToken);
 

@@ -120,11 +120,13 @@ export const authService = {
 
     const accessToken = await jwtToken(
       { login: user.accountData.login },
-      process.env.ACCESS_TOKEN_PRIVATE_KEY as string
+      process.env.ACCESS_TOKEN_PRIVATE_KEY as string,
+      "10s"
     );
     const newRefreshToken = await jwtToken(
       { login: user.accountData.login },
-      process.env.REFRESH_TOKEN_PRIVATE_KEY as string
+      process.env.REFRESH_TOKEN_PRIVATE_KEY as string,
+      "20s"
     );
 
     await usersWriteRepository.addTokensForUser(user._id, accessToken, newRefreshToken);
