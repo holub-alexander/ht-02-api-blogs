@@ -41,7 +41,7 @@ export const authLoginHandler = async (
 
   await usersWriteRepository.addTokensForUser(user._id, accessToken, refreshToken);
 
-  res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
+  res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: false });
   return res.status(constants.HTTP_STATUS_OK).send({ accessToken });
 };
 
@@ -118,7 +118,7 @@ export const authRefreshTokenHandler = async (req: Request, res: Response) => {
     return res.sendStatus(401);
   }
 
-  res.cookie("refreshToken", newTokens.refreshToken, { httpOnly: true, secure: true });
+  res.cookie("refreshToken", newTokens.refreshToken, { httpOnly: true, secure: false });
 
   return res.status(constants.HTTP_STATUS_OK).send({ accessToken: newTokens.accessToken });
 };
