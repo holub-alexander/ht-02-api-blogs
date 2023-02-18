@@ -17,3 +17,19 @@ export const verifyJwtToken: RequestHandler = async (req: Request, res, next) =>
     return res.sendStatus(401);
   }
 };
+
+export const verifyRefreshJwtToken: RequestHandler = async (req, res, next) => {
+  const tokenFromCookie = req.cookies.refreshToken;
+
+  if (!tokenFromCookie) {
+    return res.sendStatus(401);
+  }
+
+  try {
+    req.user = (await jwt.verify(tokenFromCookie, process.env.REFRESH_TOKEN_PRIVATE_KEY as string)) as User;
+
+    next();
+  } catch (err) {
+    return res.sendStatus(401);
+  }
+};

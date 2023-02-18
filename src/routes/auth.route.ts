@@ -14,7 +14,7 @@ import {
   authRegistrationEmailResendingHandler,
   authRegistrationHandler,
 } from "../service-layer/controllers/auth.controller";
-import { verifyJwtToken } from "../middleware/custom/jwt-auth";
+import { verifyJwtToken, verifyRefreshJwtToken } from "../middleware/custom/jwt-auth";
 import { userSchema } from "../business-layer/validators/schemas/user-schema";
 
 const authRouter = express.Router();
@@ -28,7 +28,7 @@ authRouter.post(
   validate,
   authRegistrationEmailResendingHandler
 );
-authRouter.post("/refresh-token", authRefreshTokenHandler);
+authRouter.post("/refresh-token", verifyRefreshJwtToken, authRefreshTokenHandler);
 authRouter.post("/logout", authLogoutHandler);
 authRouter.get("/me", verifyJwtToken, authMeHandler);
 
