@@ -29,7 +29,7 @@ authRouter.post(
   authRegistrationEmailResendingHandler
 );
 authRouter.post("/refresh-token", verifyRefreshJwtToken, authRefreshTokenHandler);
-authRouter.post("/logout", authLogoutHandler);
+authRouter.post("/logout", verifyRefreshJwtToken, authLogoutHandler);
 authRouter.get("/me", verifyJwtToken, authMeHandler);
 
 export default authRouter;
