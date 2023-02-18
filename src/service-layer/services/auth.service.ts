@@ -58,7 +58,11 @@ export const authService = {
         }),
         isConfirmed: false,
       },
-    };
+      tokens: {
+        accessToken: null,
+        refreshToken: null,
+      },
+    } as UserAccountDBType;
 
     const createdUser = await usersWriteRepository.createUser(userData);
 

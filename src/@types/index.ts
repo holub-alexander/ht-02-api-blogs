@@ -54,6 +54,10 @@ export type UserAccountDBType = {
     expirationDate: Date | null;
     isConfirmed: boolean;
   };
+  tokens: {
+    accessToken: string | null;
+    refreshToken: string | null;
+  };
 };
 
 export enum ErrorTypes {

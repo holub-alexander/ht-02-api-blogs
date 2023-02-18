@@ -53,12 +53,23 @@ export const usersWriteRepository = {
   },
 
   addTokensForUser: async (userId: ObjectId, accessToken: string, refreshToken: string): Promise<boolean> => {
-    const res = await usersCollection.updateOne({ _id: userId }, { $set: { accessToken, refreshToken } });
+    const user = await usersCollection.findOne<WithId<UserAccountDBType>>({ _id: userId });
+
+    if (!user) {
+      return false;
+    }
+
+    const res = await usersCollection.updateOne({ _id: userId }, { $set: { tokens: { accessToken, refreshToken } } });
+
     return res.modifiedCount === 1;
   },
 
   resetTokensForUser: async (userId: ObjectId): Promise<boolean> => {
-    const res = await usersCollection.updateOne({ _id: userId }, { $set: { accessToken: null, refreshToken: null } });
+    const res = await usersCollection.updateOne(
+      { _id: userId },
+      { $set: { tokens: { accessToken: null, refreshToken: null } } }
+    );
+
     return res.modifiedCount === 1;
   },
 };
