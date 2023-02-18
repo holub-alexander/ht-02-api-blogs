@@ -8,6 +8,7 @@ import {
 import {
   authConfirmRegistrationHandler,
   authLoginHandler,
+  authLogoutHandler,
   authMeHandler,
   authRefreshTokenHandler,
   authRegistrationEmailResendingHandler,
@@ -28,6 +29,7 @@ authRouter.post(
   authRegistrationEmailResendingHandler
 );
 authRouter.post("/refresh-token", authRefreshTokenHandler);
+authRouter.post("/logout", authLogoutHandler);
 authRouter.get("/me", verifyJwtToken, authMeHandler);
 
 export default authRouter;

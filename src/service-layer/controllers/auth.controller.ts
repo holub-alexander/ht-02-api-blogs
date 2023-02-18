@@ -28,13 +28,19 @@ export const authLoginHandler = async (
     return res.sendStatus(401);
   }
 
-  const token = await jwtToken({ login: user.accountData.login });
-  const refreshToken = await jwtToken({ login: user.accountData.login });
+  const accessToken = await jwtToken({ login: user.accountData.login }, process.env.ACCESS_TOKEN_PRIVATE_KEY as string);
+  const refreshToken = await jwtToken(
+    { login: user.accountData.login },
+    process.env.REFRESH_TOKEN_PRIVATE_KEY as string
+  );
 
-  await usersWriteRepository.addRefreshTokenForUser(user._id, refreshToken);
+  console.log("accessToken", accessToken);
+  console.log("refreshToken", refreshToken);
+
+  await usersWriteRepository.addTokensForUser(user._id, accessToken, refreshToken);
 
   res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
-  return res.status(constants.HTTP_STATUS_OK).send({ accessToken: token });
+  return res.status(constants.HTTP_STATUS_OK).send({ accessToken });
 };
 
 export const authRegistrationHandler = async (req: Request<{}, {}, UserInputModel>, res: Response) => {
@@ -104,7 +110,7 @@ export const authRefreshTokenHandler = async (req: Request, res: Response) => {
     return res.sendStatus(401);
   }
 
-  const newTokens = await authService.updateRefreshToken(req.cookies.refreshToken);
+  const newTokens = await authService.updateTokens(req.cookies.refreshToken);
 
   if (!newTokens) {
     return res.sendStatus(401);
@@ -113,4 +119,14 @@ export const authRefreshTokenHandler = async (req: Request, res: Response) => {
   res.cookie("refreshToken", newTokens.refreshToken, { httpOnly: true, secure: true });
 
   return res.status(constants.HTTP_STATUS_OK).send({ accessToken: newTokens.accessToken });
+};
+
+export const authLogoutHandler = async (req: Request, res: Response) => {
+  if (!req.cookies.refreshToken) {
+    return res.sendStatus(401);
+  }
+
+  const response = await authService.logout(req.cookies.refreshToken);
+
+  return res.sendStatus(response ? constants.HTTP_STATUS_NO_CONTENT : 401);
 };

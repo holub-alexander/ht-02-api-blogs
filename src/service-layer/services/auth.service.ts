@@ -111,18 +111,34 @@ export const authService = {
     }
   },
 
-  updateRefreshToken: async (refreshToken: string): Promise<null | { accessToken: string; refreshToken: string }> => {
+  updateTokens: async (refreshToken: string): Promise<null | { accessToken: string; refreshToken: string }> => {
     const user = await usersQueryRepository.getUserByRefreshToken(refreshToken);
 
     if (!user) {
       return null;
     }
 
-    const token = await jwtToken({ login: user.accountData.login });
-    const newRefreshToken = await jwtToken({ login: user.accountData.login });
+    const accessToken = await jwtToken(
+      { login: user.accountData.login },
+      process.env.ACCESS_TOKEN_PRIVATE_KEY as string
+    );
+    const newRefreshToken = await jwtToken(
+      { login: user.accountData.login },
+      process.env.REFRESH_TOKEN_PRIVATE_KEY as string
+    );
 
-    await usersWriteRepository.addRefreshTokenForUser(user._id, newRefreshToken);
+    await usersWriteRepository.addTokensForUser(user._id, accessToken, newRefreshToken);
 
-    return { accessToken: token, refreshToken: newRefreshToken };
+    return { accessToken, refreshToken: newRefreshToken };
+  },
+
+  logout: async (refreshToken: string): Promise<boolean> => {
+    const user = await usersQueryRepository.getUserByRefreshToken(refreshToken);
+
+    if (!user) {
+      return false;
+    }
+
+    return await usersWriteRepository.resetTokensForUser(user._id);
   },
 };

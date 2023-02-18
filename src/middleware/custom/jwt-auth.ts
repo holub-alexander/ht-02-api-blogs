@@ -10,7 +10,7 @@ export const verifyJwtToken: RequestHandler = async (req: Request, res, next) =>
   }
 
   try {
-    req.user = (await jwt.verify(token, process.env.JWT_TOKEN_SECRET_KEY as string)) as User;
+    req.user = (await jwt.verify(token, process.env.ACCESS_TOKEN_PRIVATE_KEY as string)) as User;
 
     next();
   } catch (err) {
