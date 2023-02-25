@@ -16,16 +16,24 @@ import {
 } from "../service-layer/controllers/auth.controller";
 import { verifyJwtToken, verifyRefreshJwtToken } from "../middleware/custom/jwt-auth";
 import { userSchema } from "../business-layer/validators/schemas/user-schema";
+import { authRateLimiter } from "../business-layer/security/rate-limiter";
 
 const authRouter = express.Router();
 
-authRouter.post("/login", authLoginSchema, validate, authLoginHandler);
-authRouter.post("/registration", userSchema, validate, authRegistrationHandler);
-authRouter.post("/registration-confirmation", confirmRegistrationSchema, validate, authConfirmRegistrationHandler);
+authRouter.post("/login", authLoginSchema, validate, authRateLimiter, authLoginHandler);
+authRouter.post("/registration", userSchema, validate, authRateLimiter, authRegistrationHandler);
+authRouter.post(
+  "/registration-confirmation",
+  confirmRegistrationSchema,
+  validate,
+  authRateLimiter,
+  authConfirmRegistrationHandler
+);
 authRouter.post(
   "/registration-email-resending",
   registrationEmailResendingSchema,
   validate,
+  authRateLimiter,
   authRegistrationEmailResendingHandler
 );
 authRouter.post("/refresh-token", verifyRefreshJwtToken, authRefreshTokenHandler);
