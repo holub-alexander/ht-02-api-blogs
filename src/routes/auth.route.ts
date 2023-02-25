@@ -20,20 +20,20 @@ import { authRateLimiter } from "../business-layer/security/rate-limiter";
 
 const authRouter = express.Router();
 
-authRouter.post("/login", authLoginSchema, validate, authRateLimiter, authLoginHandler);
-authRouter.post("/registration", userSchema, validate, authRateLimiter, authRegistrationHandler);
+authRouter.post("/login", authLoginSchema, validate, authRateLimiter(), authLoginHandler);
+authRouter.post("/registration", userSchema, validate, authRateLimiter(), authRegistrationHandler);
 authRouter.post(
   "/registration-confirmation",
   confirmRegistrationSchema,
   validate,
-  authRateLimiter,
+  authRateLimiter(),
   authConfirmRegistrationHandler
 );
 authRouter.post(
   "/registration-email-resending",
   registrationEmailResendingSchema,
   validate,
-  authRateLimiter,
+  authRateLimiter(),
   authRegistrationEmailResendingHandler
 );
 authRouter.post("/refresh-token", verifyRefreshJwtToken, authRefreshTokenHandler);
