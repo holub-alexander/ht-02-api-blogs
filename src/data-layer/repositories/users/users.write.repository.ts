@@ -51,10 +51,4 @@ export const usersWriteRepository = {
     const res = await usersCollection.deleteMany({});
     return res.deletedCount > 0;
   },
-
-  resetTokensForUser: async (userId: ObjectId): Promise<boolean> => {
-    const res = await usersCollection.updateOne({ _id: userId }, { $set: { "tokens.refreshToken": null } });
-
-    return res.modifiedCount === 1;
-  },
 };

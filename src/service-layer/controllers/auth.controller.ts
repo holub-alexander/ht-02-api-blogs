@@ -25,7 +25,7 @@ export const authLoginHandler = async (
     return res.sendStatus(401);
   }
 
-  res.cookie("refreshToken", tokens.refreshToken, { httpOnly: false, secure: false });
+  res.cookie("refreshToken", tokens.refreshToken, { httpOnly: true, secure: true });
   return res.status(constants.HTTP_STATUS_OK).send({ accessToken: tokens.accessToken });
 };
 
@@ -102,7 +102,7 @@ export const authRefreshTokenHandler = async (req: Request, res: Response) => {
     return res.sendStatus(401);
   }
 
-  res.cookie("refreshToken", newTokens.refreshToken, { httpOnly: false, secure: false });
+  res.cookie("refreshToken", newTokens.refreshToken, { httpOnly: true, secure: true });
 
   return res.status(constants.HTTP_STATUS_OK).send({ accessToken: newTokens.accessToken });
 };

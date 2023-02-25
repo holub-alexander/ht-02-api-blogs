@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from "uuid";
 import { jwtToken } from "../../business-layer/security/jwt-token";
 
 export const securityService = {
+  /* TODO: Change expirationDate */
+
   addSecurityDeviceForUser: async ({
     userId,
     ip,
@@ -18,7 +20,7 @@ export const securityService = {
     const data: RefreshTokenMeta = {
       issuedAt: new Date(new Date().setMilliseconds(0)),
       expirationDate: add(new Date(), {
-        hours: 1,
+        seconds: 20,
       }),
       deviceId: uuidv4(),
       title: userAgent,
@@ -44,7 +46,7 @@ export const securityService = {
     const data = {
       deviceId,
       expirationDate: add(new Date(), {
-        hours: 1,
+        seconds: 20,
       }),
       issuedAt: new Date(iat * 1000),
       newIssuedAt: newIssuedAtWithoutMs,
@@ -60,7 +62,7 @@ export const securityService = {
           iat: newIssuedAtWithoutMs.valueOf() / 1000,
         } as UserRefreshTokenPayload,
         process.env.REFRESH_TOKEN_PRIVATE_KEY as string,
-        "1h"
+        "20s"
       );
     }
 

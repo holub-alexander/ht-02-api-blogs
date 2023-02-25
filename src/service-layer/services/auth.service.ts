@@ -80,7 +80,7 @@ export const authService = {
         iat: Math.round(addedSecurityDevice.issuedAt.valueOf() / 1000),
       },
       process.env.REFRESH_TOKEN_PRIVATE_KEY as string,
-      "1h"
+      "20s"
     );
 
     return { refreshToken, accessToken };
