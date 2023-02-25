@@ -35,7 +35,9 @@ export type Paginator<T> = {
   items: T;
 };
 
-export type User = JwtPayload & { loginOrEmail: string };
+export type User = JwtPayload & { loginOrEmail: string; login: string };
+
+export type UserRefreshTokenPayload = { login: string; deviceId: string; iat: number; exp: number };
 
 export type CommentatorInfo = {
   userId: string;
@@ -47,6 +49,14 @@ export type ErrorMessage = {
   message: string;
 };
 
+export type RefreshTokenMeta = {
+  ip: string;
+  title: string;
+  deviceId: string;
+  issuedAt: Date;
+  expirationDate: Date;
+};
+
 export type UserAccountDBType = {
   accountData: UserInputModel & { createdAt: string };
   emailConfirmation: {
@@ -54,10 +64,7 @@ export type UserAccountDBType = {
     expirationDate: Date | null;
     isConfirmed: boolean;
   };
-  tokens: {
-    accessToken: string | null;
-    refreshToken: string | null;
-  };
+  refreshTokensMeta: RefreshTokenMeta[] | [];
 };
 
 export enum ErrorTypes {

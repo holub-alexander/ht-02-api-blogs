@@ -7,6 +7,7 @@ export const expressConfig = (): Application => {
   const app: Application = express();
 
   app.use(cookieParser());
+  app.set("trust proxy", true);
   app.use(
     cors({
       credentials: true,

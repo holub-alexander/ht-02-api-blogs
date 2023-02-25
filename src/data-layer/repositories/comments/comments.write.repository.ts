@@ -1,4 +1,4 @@
-import { CommentInputModel, UserInputModel } from "../../../service-layer/request/requestTypes";
+import { CommentInputModel } from "../../../service-layer/request/requestTypes";
 import { ObjectId, WithId } from "mongodb";
 import { CommentViewModel } from "../../../service-layer/response/responseTypes";
 import { commentsCollection, postsCollection } from "../../adapters/mongoDB";

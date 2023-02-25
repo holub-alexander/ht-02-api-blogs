@@ -42,10 +42,7 @@ export const usersService = {
         expirationDate: null,
         isConfirmed: true,
       },
-      tokens: {
-        accessToken: null,
-        refreshToken: null,
-      },
+      refreshTokensMeta: [],
     } as UserAccountDBType;
 
     const newUser = await usersWriteRepository.createUser(userData);

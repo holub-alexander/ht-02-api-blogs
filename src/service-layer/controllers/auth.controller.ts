@@ -7,42 +7,26 @@ import {
 } from "../request/requestTypes";
 import { constants } from "http2";
 import { authService } from "../services/auth.service";
-
 import { LoginSuccessViewModel } from "../response/responseTypes";
-import { jwtToken } from "../../business-layer/security/jwt-token";
 import { APIErrorResult } from "../../@types";
-import { usersQueryRepository } from "../../data-layer/repositories/users/users.query.repository";
-import { usersWriteRepository } from "../../data-layer/repositories/users/users.write.repository";
 
 export const authLoginHandler = async (
   req: Request<{}, {}, LoginInputModel>,
   res: Response<LoginSuccessViewModel | number>
 ) => {
-  const user = await usersQueryRepository.getUserByLoginOrEmailOnly(req.body.loginOrEmail);
-  const isCorrectCredentials = await authService.checkCredentials({
+  const tokens = await authService.loginUser({
     loginOrEmail: req.body.loginOrEmail,
     password: req.body.password,
+    ip: req.ip || req.ips[0],
+    userAgent: req.get("user-agent"),
   });
 
-  if (!isCorrectCredentials || !user) {
+  if (!tokens) {
     return res.sendStatus(401);
   }
 
-  const accessToken = await jwtToken(
-    { login: user.accountData.login },
-    process.env.ACCESS_TOKEN_PRIVATE_KEY as string,
-    "10s"
-  );
-  const refreshToken = await jwtToken(
-    { login: user.accountData.login },
-    process.env.REFRESH_TOKEN_PRIVATE_KEY as string,
-    "20s"
-  );
-
-  await usersWriteRepository.addTokensForUser(user._id, accessToken, refreshToken);
-
-  res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true });
-  return res.status(constants.HTTP_STATUS_OK).send({ accessToken });
+  res.cookie("refreshToken", tokens.refreshToken, { httpOnly: false, secure: false });
+  return res.status(constants.HTTP_STATUS_OK).send({ accessToken: tokens.accessToken });
 };
 
 export const authRegistrationHandler = async (req: Request<{}, {}, UserInputModel>, res: Response) => {
@@ -112,13 +96,13 @@ export const authRefreshTokenHandler = async (req: Request, res: Response) => {
     return res.sendStatus(401);
   }
 
-  const newTokens = await authService.updateTokens(req.cookies.refreshToken);
+  const newTokens = await authService.updateTokens(req.userRefreshTokenPayload);
 
   if (!newTokens) {
     return res.sendStatus(401);
   }
 
-  res.cookie("refreshToken", newTokens.refreshToken, { httpOnly: true, secure: true });
+  res.cookie("refreshToken", newTokens.refreshToken, { httpOnly: false, secure: false });
 
   return res.status(constants.HTTP_STATUS_OK).send({ accessToken: newTokens.accessToken });
 };
@@ -128,7 +112,7 @@ export const authLogoutHandler = async (req: Request, res: Response) => {
     return res.sendStatus(401);
   }
 
-  const response = await authService.logout(req.cookies.refreshToken);
+  const response = await authService.logout(req.userRefreshTokenPayload);
 
   return res.sendStatus(response ? constants.HTTP_STATUS_NO_CONTENT : 401);
 };

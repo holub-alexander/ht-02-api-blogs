@@ -1,5 +1,5 @@
 // In TS, interfaces are "open" and can be extended
-import { User } from "./src/@types";
+import { User, UserRefreshTokenPayload } from "./src/@types";
 
 interface Date {
   /**
@@ -42,6 +42,7 @@ declare global {
   namespace Express {
     export interface Request {
       user: User;
+      userRefreshTokenPayload: UserRefreshTokenPayload;
     }
   }
 }
