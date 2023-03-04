@@ -1,6 +1,6 @@
 import { RequestHandler, Request } from "express";
 import jwt from "jsonwebtoken";
-import { PasswordRecoveryPayload, User, UserRefreshTokenPayload } from "../../@types";
+import { APIErrorResult, PasswordRecoveryPayload, User, UserRefreshTokenPayload } from "../../@types";
 import { securityQueryRepository } from "../../data-layer/repositories/security/security-query.repository";
 import { NewPasswordRecoveryInputModel } from "../../service-layer/request/requestTypes";
 
@@ -50,8 +50,12 @@ export const verifyRefreshJwtToken: RequestHandler = async (req, res, next) => {
 export const verifyPasswordRecoveryJwtToken: RequestHandler = async (req, res, next) => {
   const passwordRecoveryToken = req.body.recoveryCode;
 
+  const error: APIErrorResult = {
+    errorsMessages: [{ field: "recoveryCode", message: "recoveryCode is incorrect or expired" }],
+  };
+
   if (!passwordRecoveryToken) {
-    return res.sendStatus(400);
+    return res.status(400).send(error);
   }
 
   try {
@@ -59,6 +63,6 @@ export const verifyPasswordRecoveryJwtToken: RequestHandler = async (req, res, n
 
     next();
   } catch (err) {
-    return res.sendStatus(400);
+    return res.status(400).send(error);
   }
 };
