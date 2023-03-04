@@ -42,6 +42,9 @@ export const usersService = {
         expirationDate: null,
         isConfirmed: true,
       },
+      passwordRecovery: {
+        recoveryCode: null,
+      },
       refreshTokensMeta: [],
     } as UserAccountDBType;
 

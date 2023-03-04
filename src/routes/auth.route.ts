@@ -3,7 +3,8 @@ import express from "express";
 import {
   authLoginSchema,
   confirmRegistrationSchema,
-  registrationEmailResendingSchema,
+  checkEmailSchema,
+  passwordRecoverySchema,
 } from "../business-layer/validators/schemas/auth-schema";
 import {
   authConfirmRegistrationHandler,
@@ -13,8 +14,10 @@ import {
   authRefreshTokenHandler,
   authRegistrationEmailResendingHandler,
   authRegistrationHandler,
+  confirmPasswordRecoveryHandler,
+  passwordRecoveryHandler,
 } from "../service-layer/controllers/auth.controller";
-import { verifyJwtToken, verifyRefreshJwtToken } from "../middleware/custom/jwt-auth";
+import { verifyJwtToken, verifyPasswordRecoveryJwtToken, verifyRefreshJwtToken } from "../middleware/custom/jwt-auth";
 import { userSchema } from "../business-layer/validators/schemas/user-schema";
 import { authRateLimiter } from "../business-layer/security/rate-limiter";
 
@@ -31,7 +34,7 @@ authRouter.post(
 );
 authRouter.post(
   "/registration-email-resending",
-  registrationEmailResendingSchema,
+  checkEmailSchema,
   validate,
   authRateLimiter(),
   authRegistrationEmailResendingHandler
@@ -39,5 +42,14 @@ authRouter.post(
 authRouter.post("/refresh-token", verifyRefreshJwtToken, authRefreshTokenHandler);
 authRouter.post("/logout", verifyRefreshJwtToken, authLogoutHandler);
 authRouter.get("/me", verifyJwtToken, authMeHandler);
+authRouter.post("/password-recovery", authRateLimiter(), checkEmailSchema, validate, passwordRecoveryHandler);
+authRouter.post(
+  "/new-password",
+  authRateLimiter(),
+  passwordRecoverySchema,
+  validate,
+  verifyPasswordRecoveryJwtToken,
+  confirmPasswordRecoveryHandler
+);
 
 export default authRouter;

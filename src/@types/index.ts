@@ -37,6 +37,8 @@ export type Paginator<T> = {
 
 export type User = JwtPayload & { loginOrEmail: string; login: string };
 
+export type PasswordRecoveryPayload = JwtPayload & { email: string };
+
 export type UserRefreshTokenPayload = { login: string; deviceId: string; iat: number; exp: number };
 
 export type CommentatorInfo = {
@@ -63,6 +65,9 @@ export type UserAccountDBType = {
     confirmationCode: string | null;
     expirationDate: Date | null;
     isConfirmed: boolean;
+  };
+  passwordRecovery: {
+    recoveryCode: string | null;
   };
   refreshTokensMeta: RefreshTokenMeta[] | [];
 };

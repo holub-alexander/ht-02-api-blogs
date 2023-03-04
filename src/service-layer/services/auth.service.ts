@@ -1,5 +1,6 @@
 import {
   LoginInputModel,
+  NewPasswordRecoveryInputModel,
   RegistrationConfirmationCodeModel,
   RegistrationEmailResending,
   UserInputModel,
@@ -18,6 +19,7 @@ import { CustomError } from "../../utils/classes/CustomError";
 import { jwtToken } from "../../business-layer/security/jwt-token";
 import { securityService } from "./security.service";
 import { securityWriteRepository } from "../../data-layer/repositories/security/security-write.repository";
+import { getPasswordHash } from "../../utils/common/getPasswordHash";
 
 export const authService = {
   checkCredentials: async ({ loginOrEmail, password }: LoginInputModel): Promise<boolean> => {
@@ -98,9 +100,7 @@ export const authService = {
       throw new CustomError("User with this email already exists", "email");
     }
 
-    const passwordSalt = await bcrypt.genSalt(10);
-    const passwordHash = await generateHash(body.password, passwordSalt);
-
+    const passwordHash = await getPasswordHash(body.password);
     const userData = {
       accountData: { ...body, password: passwordHash, createdAt: new Date().toISOString() },
       emailConfirmation: {
@@ -109,6 +109,9 @@ export const authService = {
           hours: 1,
         }),
         isConfirmed: false,
+      },
+      passwordRecovery: {
+        recoveryCode: null,
       },
       refreshTokensMeta: [],
     } as UserAccountDBType;
@@ -197,5 +200,26 @@ export const authService = {
 
   logout: async (refreshTokenPayload: UserRefreshTokenPayload): Promise<boolean> => {
     return securityWriteRepository.deleteDeviceSessionById(refreshTokenPayload.login, refreshTokenPayload.deviceId);
+  },
+
+  passwordRecovery: async (email: string): Promise<boolean> => {
+    const recoveryCode = await jwtToken({ email }, process.env.PASSWORD_RECOVERY_PRIVATE_KEY as string, "1h");
+    const user = await usersQueryRepository.getUserByEmail(email);
+
+    await emailManager.sendPasswordRecoveryEmail(email, recoveryCode);
+
+    if (!user) {
+      return true;
+    }
+
+    await usersWriteRepository.addPasswordRecoveryData(user._id, recoveryCode);
+
+    return true;
+  },
+
+  confirmPasswordRecovery: async ({ newPassword, recoveryCode }: NewPasswordRecoveryInputModel): Promise<boolean> => {
+    const passwordHash = await getPasswordHash(newPassword);
+
+    return usersWriteRepository.confirmPasswordRecovery({ passwordHash, recoveryCode });
   },
 };

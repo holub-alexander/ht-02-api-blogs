@@ -1,7 +1,8 @@
 import { RequestHandler, Request } from "express";
 import jwt from "jsonwebtoken";
-import { User, UserRefreshTokenPayload } from "../../@types";
+import { PasswordRecoveryPayload, User, UserRefreshTokenPayload } from "../../@types";
 import { securityQueryRepository } from "../../data-layer/repositories/security/security-query.repository";
+import { NewPasswordRecoveryInputModel } from "../../service-layer/request/requestTypes";
 
 export const verifyJwtToken: RequestHandler = async (req: Request, res, next) => {
   const token = req.body.token || req.query.token || req.headers.authorization?.replace(/^Bearer\s/, "");
@@ -43,5 +44,21 @@ export const verifyRefreshJwtToken: RequestHandler = async (req, res, next) => {
     next();
   } catch (err) {
     return res.sendStatus(401);
+  }
+};
+
+export const verifyPasswordRecoveryJwtToken: RequestHandler = async (req, res, next) => {
+  const passwordRecoveryToken = req.body.recoveryCode;
+
+  if (!passwordRecoveryToken) {
+    return res.sendStatus(400);
+  }
+
+  try {
+    await jwt.verify(passwordRecoveryToken, process.env.PASSWORD_RECOVERY_PRIVATE_KEY as string);
+
+    next();
+  } catch (err) {
+    return res.sendStatus(400);
   }
 };

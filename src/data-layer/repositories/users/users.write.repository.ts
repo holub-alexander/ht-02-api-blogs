@@ -2,6 +2,7 @@ import { usersCollection } from "../../adapters/mongoDB";
 import { usersQueryRepository } from "./users.query.repository";
 import { ObjectId, WithId } from "mongodb";
 import { UserAccountDBType } from "../../../@types";
+import { NewPasswordRecoveryInputModel } from "../../../service-layer/request/requestTypes";
 
 export const usersWriteRepository = {
   createUser: async (data: UserAccountDBType): Promise<WithId<UserAccountDBType> | null> => {
@@ -50,5 +51,27 @@ export const usersWriteRepository = {
   deleteAllUsers: async (): Promise<boolean> => {
     const res = await usersCollection.deleteMany({});
     return res.deletedCount > 0;
+  },
+
+  addPasswordRecoveryData: async (userId: ObjectId, recoveryCode: string): Promise<boolean> => {
+    const res = await usersCollection.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          "passwordRecovery.recoveryCode": recoveryCode,
+        },
+      }
+    );
+
+    return res.modifiedCount === 1;
+  },
+
+  confirmPasswordRecovery: async ({ recoveryCode, passwordHash }: { passwordHash: string; recoveryCode: string }) => {
+    const res = await usersCollection.updateOne(
+      { "passwordRecovery.recoveryCode": recoveryCode },
+      { $set: { "passwordRecovery.recoveryCode": null, "accountData.password": passwordHash } }
+    );
+
+    return res.modifiedCount === 1;
   },
 };

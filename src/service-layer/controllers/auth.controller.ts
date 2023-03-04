@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import {
   LoginInputModel,
+  NewPasswordRecoveryInputModel,
+  PasswordRecoveryInputModel,
   RegistrationConfirmationCodeModel,
   RegistrationEmailResending,
   UserInputModel,
@@ -115,4 +117,22 @@ export const authLogoutHandler = async (req: Request, res: Response) => {
   const response = await authService.logout(req.userRefreshTokenPayload);
 
   return res.sendStatus(response ? constants.HTTP_STATUS_NO_CONTENT : 401);
+};
+
+export const passwordRecoveryHandler = async (req: Request<{}, PasswordRecoveryInputModel>, res: Response) => {
+  await authService.passwordRecovery(req.body.email);
+
+  return res.sendStatus(constants.HTTP_STATUS_NO_CONTENT);
+};
+
+export const confirmPasswordRecoveryHandler = async (
+  req: Request<{}, NewPasswordRecoveryInputModel>,
+  res: Response
+) => {
+  const isUpdatedPassword = await authService.confirmPasswordRecovery({
+    newPassword: req.body.newPassword,
+    recoveryCode: req.body.recoveryCode,
+  });
+
+  return res.sendStatus(isUpdatedPassword ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);
 };

@@ -39,3 +39,12 @@ export type RegistrationConfirmationCodeModel = {
 export type RegistrationEmailResending = {
   email: string;
 };
+
+export type PasswordRecoveryInputModel = {
+  email: string;
+};
+
+export type NewPasswordRecoveryInputModel = {
+  newPassword: string;
+  recoveryCode: string;
+};

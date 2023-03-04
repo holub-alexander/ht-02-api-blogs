@@ -57,13 +57,37 @@ export const confirmRegistrationSchema = checkSchema(
   ["body"]
 );
 
-export const registrationEmailResendingSchema = checkSchema(
+export const checkEmailSchema = checkSchema(
   {
     email: {
       trim: true,
       matches: {
         options: EMAIL_REGEX,
         errorMessage: "Invalid email entered",
+      },
+    },
+  },
+  ["body"]
+);
+
+export const passwordRecoverySchema = checkSchema(
+  {
+    newPassword: {
+      trim: true,
+      isLength: {
+        errorMessage: "The field must contain from 6 to 20 characters",
+        options: {
+          min: 6,
+          max: 20,
+        },
+      },
+    },
+    recoveryCode: {
+      isLength: {
+        errorMessage: "The field is required",
+        options: {
+          min: 1,
+        },
       },
     },
   },
