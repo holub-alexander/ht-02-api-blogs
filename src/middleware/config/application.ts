@@ -1,4 +1,4 @@
-import { mongoDB } from "../../data-layer/adapters/mongoDB";
+import { mongoDB } from "../../data-layer/adapters/mongo-db";
 import { expressConfig } from "./express";
 
 export const applicationConfig = () => {

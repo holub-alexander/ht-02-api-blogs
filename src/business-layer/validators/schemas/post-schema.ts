@@ -1,7 +1,7 @@
 import { checkSchema } from "express-validator";
-import { blogsService } from "../../../service-layer/services/blogs.service";
 import { paginationQueryParamsSchema } from "./query-params/pagination-schema";
 import { sortQueryParamsSchema } from "./query-params/sort-schema";
+import { blogsService } from "../../../data-layer/composition-root";
 
 export const postsQuerySchema = [paginationQueryParamsSchema, sortQueryParamsSchema];
 

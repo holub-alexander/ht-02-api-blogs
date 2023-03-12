@@ -1,5 +1,5 @@
 import { checkSchema } from "express-validator";
-import { validateValueLength } from "../../../utils/common/customValidations";
+import { validateValueLength } from "../../../utils/common/custom-validations";
 import { EMAIL_REGEX } from "../../../utils/constants/regex";
 
 const createErrorMessage = (isValidValue: boolean, errorMessage: string): void | never => {

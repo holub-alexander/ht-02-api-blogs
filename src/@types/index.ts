@@ -1,5 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
-import { UserInputModel } from "../service-layer/request/requestTypes";
+import { UserInputModel } from "../service-layer/request/request-types";
 
 export enum SortDirections {
   ASC = "asc",

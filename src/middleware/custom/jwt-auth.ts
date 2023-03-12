@@ -1,8 +1,7 @@
 import { RequestHandler, Request } from "express";
 import jwt from "jsonwebtoken";
-import { APIErrorResult, PasswordRecoveryPayload, User, UserRefreshTokenPayload } from "../../@types";
-import { securityQueryRepository } from "../../data-layer/repositories/security/security-query.repository";
-import { NewPasswordRecoveryInputModel } from "../../service-layer/request/requestTypes";
+import { APIErrorResult, User, UserRefreshTokenPayload } from "../../@types";
+import { securityDevicesQueryRepository } from "../../data-layer/composition-root";
 
 export const verifyJwtToken: RequestHandler = async (req: Request, res, next) => {
   const token = req.body.token || req.query.token || req.headers.authorization?.replace(/^Bearer\s/, "");
@@ -33,7 +32,7 @@ export const verifyRefreshJwtToken: RequestHandler = async (req, res, next) => {
       process.env.REFRESH_TOKEN_PRIVATE_KEY as string
     )) as UserRefreshTokenPayload;
 
-    const findUser = await securityQueryRepository.getUserByDeviceId(refreshTokenPayload.deviceId);
+    const findUser = await securityDevicesQueryRepository.getUserByDeviceId(refreshTokenPayload.deviceId);
 
     if (!findUser) {
       throw new Error("User not found");
