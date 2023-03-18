@@ -1,7 +1,7 @@
 import { Paginator, SortDirections, UserAccountDBType } from "../../@types";
 import { UserViewModel } from "../response/response-types";
 import { UsersQueryRepository } from "../../data-layer/repositories/users/users-query-repository";
-import { usersMapper } from "../../business-layer/mappers/users-mapper";
+import { UsersMapper } from "../../business-layer/mappers/users-mapper";
 import { UserInputModel } from "../request/request-types";
 import { UsersWriteRepository } from "../../data-layer/repositories/users/users-write-repository";
 import bcrypt from "bcrypt";
@@ -29,7 +29,7 @@ export class UsersService {
 
     return {
       ...res,
-      items: usersMapper.mapUsersViewModel(res.items),
+      items: UsersMapper.mapUsersViewModel(res.items),
     };
   }
 
@@ -52,6 +52,6 @@ export class UsersService {
 
     const newUser = await this.usersWriteRepository.createUser(userData);
 
-    return newUser ? usersMapper.mapCreatedUserViewModel(newUser) : null;
+    return newUser ? UsersMapper.mapCreatedUserViewModel(newUser) : null;
   }
 }

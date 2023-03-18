@@ -1,5 +1,5 @@
 import { BlogInputModel, PostInputModel, UserInputModel } from "../request/request-types";
-import { CommentatorInfo } from "../../@types";
+import { LikeStatuses } from "../../@types";
 
 export type BlogViewModel = BlogInputModel & {
   id: string;
@@ -28,11 +28,23 @@ export type MeViewModel = {
   userId: string;
 };
 
+export type LikesInfoViewModel = {
+  likesCount: number;
+  dislikesCount: number;
+  myStatus: LikeStatuses;
+};
+
+export type CommentatorInfo = {
+  userId: string;
+  userLogin: string;
+};
+
 export type CommentViewModel = {
   id: string;
   content: string;
   commentatorInfo: CommentatorInfo;
   createdAt: string;
+  likesInfo: LikesInfoViewModel;
 };
 
 export type DeviceViewModel = {

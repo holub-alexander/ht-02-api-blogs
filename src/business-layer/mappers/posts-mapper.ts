@@ -1,25 +1,29 @@
 import { WithId } from "mongodb";
 import { PostViewModel } from "../../service-layer/response/response-types";
+import { PostDBType } from "../../@types";
 
-export const postsMapper = {
-  mapPostsViewModel: (data: WithId<PostViewModel>[]): PostViewModel[] =>
-    data.map((post) => ({
+export class PostsMapper {
+  public static mapPostsViewModel(data: WithId<PostDBType>[]): PostViewModel[] {
+    return data.map((post) => ({
       id: post._id.toString(),
       title: post.title,
       shortDescription: post.shortDescription,
       content: post.content,
-      blogId: post.blogId,
-      blogName: post.blogName,
+      blogId: post.blog.id.toString(),
+      blogName: post.blog.name,
       createdAt: post.createdAt,
-    })),
+    }));
+  }
 
-  mapPostViewModel: (data: WithId<PostViewModel>): PostViewModel => ({
-    id: data._id.toString(),
-    title: data.title,
-    shortDescription: data.shortDescription,
-    content: data.content,
-    blogId: data.blogId,
-    blogName: data.blogName,
-    createdAt: data.createdAt,
-  }),
-};
+  public static mapPostViewModel(data: WithId<PostDBType>): PostViewModel {
+    return {
+      id: data._id.toString(),
+      title: data.title,
+      shortDescription: data.shortDescription,
+      content: data.content,
+      blogId: data.blog.id.toString(),
+      blogName: data.blog.name,
+      createdAt: data.createdAt,
+    };
+  }
+}

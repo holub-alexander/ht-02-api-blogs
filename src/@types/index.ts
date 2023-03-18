@@ -1,9 +1,16 @@
 import { JwtPayload } from "jsonwebtoken";
 import { UserInputModel } from "../service-layer/request/request-types";
+import { ObjectId, WithId } from "mongodb";
 
 export enum SortDirections {
   ASC = "asc",
   DESC = "desc",
+}
+
+export enum LikeStatuses {
+  NONE = "None",
+  LIKE = "Like",
+  DISLIKE = "Dislike",
 }
 
 export type FieldError = Partial<{
@@ -23,6 +30,7 @@ export type PaginationQueryParams = {
 export type SortQueryParams = {
   sortBy: string;
   sortDirection: SortDirections;
+  field?: string;
 };
 
 export type PaginationAndSortQueryParams = Partial<PaginationQueryParams & SortQueryParams>;
@@ -37,19 +45,7 @@ export type Paginator<T> = {
 
 export type User = JwtPayload & { loginOrEmail: string; login: string };
 
-export type PasswordRecoveryPayload = JwtPayload & { email: string };
-
 export type UserRefreshTokenPayload = { login: string; deviceId: string; iat: number; exp: number };
-
-export type CommentatorInfo = {
-  userId: string;
-  userLogin: string;
-};
-
-export type ErrorMessage = {
-  type: string;
-  message: string;
-};
 
 export type RefreshTokenMeta = {
   ip: string;
@@ -59,7 +55,11 @@ export type RefreshTokenMeta = {
   expirationDate: Date;
 };
 
-export type UserAccountDBType = {
+/**
+ * DB Types
+ */
+
+export type UserAccountDBType = WithId<{
   accountData: UserInputModel & { createdAt: string };
   emailConfirmation: {
     confirmationCode: string | null;
@@ -70,8 +70,41 @@ export type UserAccountDBType = {
     recoveryCode: string | null;
   };
   refreshTokensMeta: RefreshTokenMeta[] | [];
-};
+  comments: {
+    likeComments: ObjectId[];
+    dislikeComments: ObjectId[];
+  };
+}>;
 
-export enum ErrorTypes {
-  USER_EXISTS = "USER_EXISTS",
-}
+export type BlogDBType = WithId<{
+  name: string;
+  description: string;
+  websiteUrl: string;
+  createdAt: string;
+  isMembership: boolean;
+}>;
+
+export type CommentDBType = WithId<{
+  content: string;
+  commentatorInfo: {
+    id: ObjectId;
+    login: string;
+  };
+  postId: ObjectId;
+  createdAt: string;
+  likesInfo: {
+    likesCount: number;
+    dislikesCount: number;
+  };
+}>;
+
+export type PostDBType = WithId<{
+  title: string;
+  shortDescription: string;
+  content: string;
+  createdAt: string;
+  blog: {
+    id: ObjectId;
+    name: string;
+  };
+}>;

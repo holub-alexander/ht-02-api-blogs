@@ -7,13 +7,13 @@ import {
 } from "../request/request-types";
 import { UsersQueryRepository } from "../../data-layer/repositories/users/users-query-repository";
 import bcrypt from "bcrypt";
-import { authMapper } from "../../business-layer/mappers/auth-mapper";
+import { AuthMapper } from "../../business-layer/mappers/auth-mapper";
 import { emailManager } from "../../data-layer/managers/emailManager";
 import { v4 as uuidv4 } from "uuid";
 import add from "date-fns/add";
 import { UsersWriteRepository } from "../../data-layer/repositories/users/users-write-repository";
 import { UserAccountDBType, UserRefreshTokenPayload } from "../../@types";
-import { WithId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { CustomError } from "../../utils/classes/CustomError";
 import { jwtToken } from "../../business-layer/security/jwt-token";
 import { SecurityService } from "./security-service";
@@ -41,7 +41,7 @@ export class AuthService {
 
     if (!user) return false;
 
-    return authMapper.mapMeViewModel(user);
+    return AuthMapper.mapMeViewModel(user);
   }
 
   async loginUser({
@@ -76,12 +76,14 @@ export class AuthService {
       return null;
     }
 
+    /* TODO: test */
     const accessToken = await jwtToken(
       { login: user.accountData.login },
       process.env.ACCESS_TOKEN_PRIVATE_KEY as string,
-      "10s"
+      "1h"
     );
 
+    /* TODO: test */
     const refreshToken = await jwtToken(
       {
         login: user.accountData.login,
@@ -89,13 +91,13 @@ export class AuthService {
         iat: Math.round(addedSecurityDevice.issuedAt.valueOf() / 1000),
       },
       process.env.REFRESH_TOKEN_PRIVATE_KEY as string,
-      "20s"
+      "2h"
     );
 
     return { refreshToken, accessToken };
   }
 
-  async registrationUser(body: UserInputModel): Promise<WithId<UserAccountDBType> | null> {
+  async registrationUser(body: UserInputModel): Promise<UserAccountDBType | null> {
     const findUserByLogin = await this.usersQueryRepository.getUserByLogin(body.login);
     const findUserByEmail = await this.usersQueryRepository.getUserByEmail(body.email);
 
@@ -108,7 +110,8 @@ export class AuthService {
     }
 
     const passwordHash = await getPasswordHash(body.password);
-    const userData = {
+    const userData: UserAccountDBType = {
+      _id: new ObjectId(),
       accountData: { ...body, password: passwordHash, createdAt: new Date().toISOString() },
       emailConfirmation: {
         confirmationCode: uuidv4(),
@@ -121,7 +124,11 @@ export class AuthService {
         recoveryCode: null,
       },
       refreshTokensMeta: [],
-    } as UserAccountDBType;
+      comments: {
+        likeComments: [],
+        dislikeComments: [],
+      },
+    };
 
     const createdUser = await this.usersWriteRepository.createUser(userData);
 
@@ -199,10 +206,11 @@ export class AuthService {
       return null;
     }
 
+    /* TODO: test */
     const accessToken = await jwtToken(
       { login: user.accountData.login },
       process.env.ACCESS_TOKEN_PRIVATE_KEY as string,
-      "10s"
+      "1h"
     );
 
     return { accessToken, refreshToken: newRefreshToken };

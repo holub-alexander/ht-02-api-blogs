@@ -1,27 +1,38 @@
-import { WithId } from "mongodb";
 import { CommentViewModel } from "../../service-layer/response/response-types";
+import { CommentDBType, LikeStatuses } from "../../@types";
 
-export const commentMapper = {
-  mapCommentsViewModel: (data: WithId<CommentViewModel>[]): CommentViewModel[] =>
-    data.map((comment) => ({
+export class CommentMapper {
+  public static mapCommentsViewModel(data: CommentDBType[]): CommentViewModel[] {
+    return data.map((comment) => ({
       id: comment._id.toString(),
       content: comment.content,
       commentatorInfo: {
-        userId: comment.commentatorInfo.userId,
-        userLogin: comment.commentatorInfo.userLogin,
+        userId: comment.commentatorInfo.id.toString(),
+        userLogin: comment.commentatorInfo.login,
       },
       createdAt: comment.createdAt,
-    })),
+      likesInfo: {
+        likesCount: comment.likesInfo.likesCount,
+        dislikesCount: comment.likesInfo.dislikesCount,
+        myStatus: LikeStatuses.NONE,
+      },
+    }));
+  }
 
-  mapCommentViewModel: (comment: WithId<CommentViewModel>): CommentViewModel => {
+  public static mapCommentViewModel(comment: CommentDBType): CommentViewModel {
     return {
       id: comment._id.toString(),
       content: comment.content,
       commentatorInfo: {
-        userId: comment.commentatorInfo.userId,
-        userLogin: comment.commentatorInfo.userLogin,
+        userId: comment.commentatorInfo.id.toString(),
+        userLogin: comment.commentatorInfo.login,
       },
       createdAt: comment.createdAt,
+      likesInfo: {
+        likesCount: comment.likesInfo.likesCount,
+        dislikesCount: comment.likesInfo.dislikesCount,
+        myStatus: LikeStatuses.NONE,
+      },
     };
-  },
-};
+  }
+}

@@ -1,14 +1,15 @@
-import { PaginationAndSortQueryParams, Paginator, SortDirections } from "../../@types";
+import { CommentDBType, PaginationAndSortQueryParams, Paginator, SortDirections } from "../../@types";
 import { CommentInputModel, PostInputModel } from "../request/request-types";
-import { PostViewModel } from "../response/response-types";
+import { CommentViewModel, PostViewModel } from "../response/response-types";
 import { PostsQueryRepository } from "../../data-layer/repositories/posts/posts-query-repository";
-import { postsMapper } from "../../business-layer/mappers/posts-mapper";
+import { PostsMapper } from "../../business-layer/mappers/posts-mapper";
 import { PostsWriteRepository } from "../../data-layer/repositories/posts/posts-write-repository";
 import { CommentsWriteRepository } from "../../data-layer/repositories/comments/comments-write-repository";
-
-import { commentMapper } from "../../business-layer/mappers/comment-mapper";
+import { CommentMapper } from "../../business-layer/mappers/comment-mapper";
 import { CommentsQueryRepository } from "../../data-layer/repositories/comments/comments-query-repository";
 import { UsersQueryRepository } from "../../data-layer/repositories/users/users-query-repository";
+import { ObjectId } from "mongodb";
+import { CommentModel } from "../../data-layer/models/comment-model";
 
 export class PostsService {
   constructor(
@@ -25,7 +26,7 @@ export class PostsService {
     sortDirection = SortDirections.DESC,
     sortBy = "",
   }): Promise<Paginator<PostViewModel[]>> {
-    const res = await this.postsQueryRepository.getAllPosts<PostViewModel>({
+    const res = await this.postsQueryRepository.getAllPosts({
       pageSize,
       pageNumber,
       sortBy,
@@ -34,7 +35,7 @@ export class PostsService {
 
     return {
       ...res,
-      items: postsMapper.mapPostsViewModel(res.items),
+      items: PostsMapper.mapPostsViewModel(res.items),
     };
   }
 
@@ -55,32 +56,49 @@ export class PostsService {
 
     return {
       ...res,
-      items: postsMapper.mapPostsViewModel(res.items),
+      items: PostsMapper.mapPostsViewModel(res.items),
     };
   }
 
   async getPostById(postId: string): Promise<PostViewModel | null> {
-    const post = await this.postsQueryRepository.getPostById<PostViewModel>(postId);
+    const post = await this.postsQueryRepository.getPostById(postId);
 
-    return post ? postsMapper.mapPostViewModel(post) : null;
+    return post ? PostsMapper.mapPostViewModel(post) : null;
   }
 
   async createPost(body: PostInputModel): Promise<PostViewModel | null> {
     const newPost = await this.postsWriteRepository.createPost(body);
 
-    return newPost ? postsMapper.mapPostViewModel(newPost) : null;
+    return newPost ? PostsMapper.mapPostViewModel(newPost) : null;
   }
 
-  async createCommentByCurrentPost(postId: string, body: CommentInputModel, loginOrEmail: string) {
-    const findPost = await this.postsQueryRepository.getPostById<PostViewModel>(postId);
-    const user = await this.usersQueryRepository.getUserByLoginOrEmailOnly(loginOrEmail);
+  async createCommentByCurrentPost(
+    postId: string,
+    body: CommentInputModel,
+    login: string
+  ): Promise<CommentViewModel | null> {
+    const findPost = await this.postsQueryRepository.getPostById(postId);
+    const user = await this.usersQueryRepository.getUserByLogin(login);
 
     if (!findPost || !user) {
       return null;
     }
 
-    const data = await this.commentsWriteRepository.createCommentByCurrentPost(postId, body, user);
-    return data ? commentMapper.mapCommentViewModel(data) : null;
+    const newCommentDTO = new CommentModel<CommentDBType>({
+      _id: new ObjectId(),
+      content: body.content,
+      commentatorInfo: { id: user._id, login: user.accountData.login },
+      createdAt: new Date().toISOString(),
+      postId: findPost._id,
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+      },
+    });
+
+    const data = await this.commentsWriteRepository.createCommentByCurrentPost(postId, newCommentDTO);
+
+    return data ? CommentMapper.mapCommentViewModel(data) : null;
   }
 
   async getAllCommentsForPost({
@@ -90,7 +108,7 @@ export class PostsService {
     sortBy = "",
     postId,
   }: PaginationAndSortQueryParams & { postId: string }) {
-    const post = await this.postsQueryRepository.getPostById<PostViewModel>(postId);
+    const post = await this.postsQueryRepository.getPostById(postId);
 
     if (!post) {
       return null;
@@ -106,7 +124,7 @@ export class PostsService {
 
     return {
       ...data,
-      items: commentMapper.mapCommentsViewModel(data.items),
+      items: CommentMapper.mapCommentsViewModel(data.items),
     };
   }
 }

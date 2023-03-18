@@ -1,28 +1,26 @@
-import { ObjectId, WithId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { BlogsQueryParams } from "../../../service-layer/controllers/blogs-controller";
-import { Paginator, SortDirections } from "../../../@types";
+import { BlogDBType, Paginator, SortDirections } from "../../../@types";
 import { getObjectToSort } from "../../../utils/common/get-object-to-sort";
-import { blogsCollection } from "../../adapters/mongo-db";
+import { BlogModel } from "../../models/blog-model";
 
 export class BlogsQueryRepository {
-  public async getAllBlogs<T>({
+  public async getAllBlogs({
     sortBy = "createdAt",
     sortDirection = SortDirections.DESC,
     searchNameTerm = "",
     pageSize = 10,
     pageNumber = 1,
-  }: BlogsQueryParams): Promise<Paginator<WithId<T>[]>> {
+  }: BlogsQueryParams): Promise<Paginator<BlogDBType[]>> {
     const sorting = getObjectToSort({ sortBy, sortDirection });
     const pageSizeValue = pageSize < 1 ? 1 : pageSize;
     const filter = { name: { $regex: searchNameTerm, $options: "i" } };
 
-    const totalCount = await blogsCollection.countDocuments(filter);
-    const res = await blogsCollection
-      .find<WithId<T>>(filter)
+    const totalCount = await BlogModel.countDocuments(filter);
+    const res = await BlogModel.find<BlogDBType>(filter)
       .skip((+pageNumber - 1) * +pageSizeValue)
       .limit(+pageSizeValue)
-      .sort(sorting)
-      .toArray();
+      .sort(sorting);
 
     return {
       pagesCount: Math.ceil(totalCount / pageSize),
@@ -33,11 +31,11 @@ export class BlogsQueryRepository {
     };
   }
 
-  public async getBlogById<T>(blogId: string): Promise<WithId<T> | null> {
+  public async getBlogById(blogId: string): Promise<BlogDBType | null> {
     const isValidId = ObjectId.isValid(blogId);
 
     if (isValidId) {
-      const blog = await blogsCollection.findOne<WithId<T>>({ _id: new ObjectId(blogId) });
+      const blog = await BlogModel.findById<BlogDBType>(new ObjectId(blogId));
 
       if (blog) {
         return blog;

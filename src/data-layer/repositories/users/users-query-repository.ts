@@ -52,7 +52,7 @@ export class UsersQueryRepository {
     return null;
   }
 
-  async getUserByLoginOrEmailOnly(loginOrEmail: string): Promise<WithId<UserAccountDBType> | null> {
+  async getUserByLoginOrEmailOnly(loginOrEmail: string): Promise<UserAccountDBType | null> {
     const filter = {
       $or: [{ "accountData.login": { $regex: loginOrEmail } }, { "accountData.email": { $regex: loginOrEmail } }],
     };
@@ -60,7 +60,7 @@ export class UsersQueryRepository {
     return await usersCollection.findOne<WithId<UserAccountDBType>>(filter);
   }
 
-  async getUserByLogin(login: string): Promise<WithId<UserAccountDBType> | null> {
+  async getUserByLogin(login: string): Promise<UserAccountDBType | null> {
     return usersCollection.findOne<WithId<UserAccountDBType>>({ "accountData.login": login });
   }
 

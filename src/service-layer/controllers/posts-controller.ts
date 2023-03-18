@@ -49,7 +49,7 @@ export class PostsController {
   }
 
   async createCommentByCurrentPost(req: Request<{ id: string }, {}, CommentInputModel>, res: Response) {
-    const data = await this.postsService.createCommentByCurrentPost(req.params.id, req.body, req.user.loginOrEmail);
+    const data = await this.postsService.createCommentByCurrentPost(req.params.id, req.body, req.user.login);
 
     if (!data) {
       return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);

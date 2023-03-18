@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { DeviceViewModel } from "../response/response-types";
-import { securityMapper } from "../../business-layer/mappers/security-mapper";
+import { SecurityMapper } from "../../business-layer/mappers/security-mapper";
 import { constants } from "http2";
 import { SecurityQueryRepository } from "../../data-layer/repositories/security/security-query-repository";
 import { SecurityWriteRepository } from "../../data-layer/repositories/security/security-write-repository";
@@ -20,7 +20,7 @@ export class SecurityController {
       return res.sendStatus(401);
     }
 
-    const formatData = securityMapper.getAllDevicesForUser(user.refreshTokensMeta);
+    const formatData = SecurityMapper.getAllDevicesForUser(user.refreshTokensMeta);
 
     res.status(constants.HTTP_STATUS_OK).send(formatData);
   }

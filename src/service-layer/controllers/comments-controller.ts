@@ -25,14 +25,14 @@ export class CommentsController {
   }
 
   async deleteCommentByIdHandler(req: Request<{ id: string }>, res: Response) {
-    const user = await this.usersQueryRepository.getUserByLoginOrEmailOnly(req.user.loginOrEmail);
+    const user = await this.usersQueryRepository.getUserByLoginOrEmailOnly(req.user.login);
     const comment = await this.commentsQueryRepository.getCommentById(req.params.id);
 
     if (!user || !comment) {
       return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
     }
 
-    if (user.accountData.login !== comment.commentatorInfo.userLogin) {
+    if (user.accountData.login !== comment.commentatorInfo.login) {
       return res.sendStatus(constants.HTTP_STATUS_FORBIDDEN);
     }
 
@@ -45,7 +45,7 @@ export class CommentsController {
 
   async updateCommentByIdHandler(req: Request<{ id: string }, {}, CommentInputModel>, res: Response) {
     const comment = await this.commentsQueryRepository.getCommentById(req.params.id);
-    const user = await this.usersQueryRepository.getUserByLoginOrEmailOnly(req.user.loginOrEmail);
+    const user = await this.usersQueryRepository.getUserByLoginOrEmailOnly(req.user.login);
 
     console.log(comment, user);
 
@@ -53,7 +53,7 @@ export class CommentsController {
       return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
     }
 
-    if (user.accountData.login !== comment.commentatorInfo.userLogin) {
+    if (user.accountData.login !== comment.commentatorInfo.login) {
       return res.sendStatus(constants.HTTP_STATUS_FORBIDDEN);
     }
 

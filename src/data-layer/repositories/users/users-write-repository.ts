@@ -7,7 +7,7 @@ import { UsersQueryRepository } from "./users-query-repository";
 export class UsersWriteRepository {
   constructor(private usersQueryRepository: UsersQueryRepository) {}
 
-  async createUser(data: UserAccountDBType): Promise<WithId<UserAccountDBType> | null> {
+  async createUser(data: UserAccountDBType): Promise<UserAccountDBType | null> {
     const res = await usersCollection.insertOne(data, {});
 
     if (res.acknowledged) {

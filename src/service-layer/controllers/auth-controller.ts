@@ -28,7 +28,8 @@ export class AuthController {
       return res.sendStatus(401);
     }
 
-    res.cookie("refreshToken", tokens.refreshToken, { httpOnly: true, secure: true });
+    /* TODO: test */
+    res.cookie("refreshToken", tokens.refreshToken, { httpOnly: false, secure: false });
     return res.status(constants.HTTP_STATUS_OK).send({ accessToken: tokens.accessToken });
   }
 
@@ -99,7 +100,8 @@ export class AuthController {
       return res.sendStatus(401);
     }
 
-    res.cookie("refreshToken", newTokens.refreshToken, { httpOnly: true, secure: true });
+    /* TODO: test */
+    res.cookie("refreshToken", newTokens.refreshToken, { httpOnly: false, secure: false });
 
     return res.status(constants.HTTP_STATUS_OK).send({ accessToken: newTokens.accessToken });
   }

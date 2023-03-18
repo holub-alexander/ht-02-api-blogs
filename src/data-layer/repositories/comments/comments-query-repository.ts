@@ -1,15 +1,15 @@
-import { commentsCollection } from "../../adapters/mongo-db";
-import { ObjectId, WithId } from "mongodb";
-import { CommentViewModel } from "../../../service-layer/response/response-types";
-import { PaginationAndSortQueryParams, Paginator, SortDirections } from "../../../@types";
+import { ObjectId } from "mongodb";
+import { CommentDBType, PaginationAndSortQueryParams, Paginator, SortDirections } from "../../../@types";
 import { getObjectToSort } from "../../../utils/common/get-object-to-sort";
+import { CommentModel } from "../../models/comment-model";
+import mongoose from "mongoose";
 
 export class CommentsQueryRepository {
-  async getCommentById(commentId: string) {
+  async getCommentById(commentId: string): Promise<CommentDBType | null> {
     const isValidId = ObjectId.isValid(commentId);
 
     if (isValidId) {
-      return await commentsCollection.findOne<WithId<CommentViewModel>>({ _id: new ObjectId(commentId) });
+      return CommentModel.findById<CommentDBType>(new ObjectId(commentId));
     }
 
     return null;
@@ -21,18 +21,16 @@ export class CommentsQueryRepository {
     sortDirection = SortDirections.DESC,
     sortBy = "",
     postId,
-  }: PaginationAndSortQueryParams & { postId: string }): Promise<Paginator<WithId<CommentViewModel>[]>> {
+  }: PaginationAndSortQueryParams & { postId: string }): Promise<Paginator<CommentDBType[]>> {
     const sorting = getObjectToSort({ sortBy, sortDirection });
     const pageSizeValue = pageSize < 1 ? 1 : pageSize;
-    const filter = { postId: new ObjectId(postId) };
+    const filter = { postId: new mongoose.Types.ObjectId(postId) };
 
-    const totalCount = await commentsCollection.countDocuments(filter);
-    const res = await commentsCollection
-      .find<WithId<CommentViewModel>>(filter)
+    const totalCount = await CommentModel.countDocuments(filter);
+    const res = await CommentModel.find<CommentDBType>(filter)
       .skip((+pageNumber - 1) * +pageSizeValue)
       .limit(+pageSizeValue)
-      .sort(sorting)
-      .toArray();
+      .sort(sorting);
 
     return {
       pagesCount: Math.ceil(totalCount / pageSize),

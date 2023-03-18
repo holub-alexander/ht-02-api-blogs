@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
 
 const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.c1xap4q.mongodb.net/${process.env.MONGODB_DATABASE_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri);
@@ -16,8 +17,7 @@ export const commentsCollection = db.collection("comments");
 
 export const mongoDB = async () => {
   try {
-    await client.connect();
-    await client.db("admin").command({ ping: 1 });
+    await mongoose.connect(uri);
     console.log("Connected successfully to MongoDB server");
   } catch (err) {
     await client.close();
