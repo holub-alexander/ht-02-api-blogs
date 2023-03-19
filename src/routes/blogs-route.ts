@@ -8,17 +8,17 @@ import { blogsController } from "../data-layer/composition-root";
 const blogsRouter = express.Router();
 
 blogsRouter.get("/", ...blogsQuerySchema, validate, blogsController.getBlogsHandler.bind(blogsController));
-blogsRouter.get("/:id", blogsController.getBlogByIdHandler.bind(blogsController));
-blogsRouter.get("/:id/posts", blogsController.getAllPostsByBlogId.bind(blogsController));
-blogsRouter.post("/", basicAuth, blogSchema, validate, blogsController.createBlogHandler.bind(blogsController));
-blogsRouter.post(
-  "/:id/posts",
-  basicAuth,
-  blogPostSchema,
-  validate,
-  blogsController.createPostForCurrentBlog.bind(blogsController)
-);
-blogsRouter.put("/:id", basicAuth, blogSchema, validate, blogsController.updateBlogByIdHandler.bind(blogsController));
-blogsRouter.delete("/:id", basicAuth, blogsController.deleteBlogHandler.bind(blogsController));
+// blogsRouter.get("/:id", blogsController.getBlogByIdHandler.bind(blogsController));
+// blogsRouter.get("/:id/posts", blogsController.getAllPostsByBlogId.bind(blogsController));
+// blogsRouter.post("/", basicAuth, blogSchema, validate, blogsController.createBlogHandler.bind(blogsController));
+// blogsRouter.post(
+//   "/:id/posts",
+//   basicAuth,
+//   blogPostSchema,
+//   validate,
+//   blogsController.createPostForCurrentBlog.bind(blogsController)
+// );
+// blogsRouter.put("/:id", basicAuth, blogSchema, validate, blogsController.updateBlogByIdHandler.bind(blogsController));
+// blogsRouter.delete("/:id", basicAuth, blogsController.deleteBlogHandler.bind(blogsController));
 
 export default blogsRouter;
