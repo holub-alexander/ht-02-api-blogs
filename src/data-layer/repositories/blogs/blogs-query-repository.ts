@@ -11,27 +11,33 @@ export class BlogsQueryRepository {
     searchNameTerm = "",
     pageSize = 10,
     pageNumber = 1,
-  }: BlogsQueryParams): Promise<Paginator<BlogDBType[]>> {
+  }: // @ts-ignore
+  BlogsQueryParams): Promise<Paginator<BlogDBType[]>> {
     console.log("=== START REPO ===");
     const sorting = getObjectToSort({ sortBy, sortDirection });
     const pageSizeValue = pageSize < 1 ? 1 : pageSize;
     const filter = { name: { $regex: searchNameTerm, $options: "i" } };
 
-    const totalCount = await BlogModel.countDocuments(filter);
-    const res = await BlogModel.find<BlogDBType>(filter)
-      .skip((+pageNumber - 1) * +pageSizeValue)
-      .limit(+pageSizeValue)
-      .sort(sorting);
+    try {
+      const totalCount = await BlogModel.countDocuments(filter);
+      console.log("=== START REPO 2 ===");
+      const res = await BlogModel.find<BlogDBType>(filter)
+        .skip((+pageNumber - 1) * +pageSizeValue)
+        .limit(+pageSizeValue)
+        .sort(sorting);
 
-    console.log("=== FINISH REPO ===");
+      console.log("=== FINISH REPO ===");
 
-    return {
-      pagesCount: Math.ceil(totalCount / pageSize),
-      page: +pageNumber,
-      pageSize: +pageSize,
-      totalCount,
-      items: res,
-    };
+      return {
+        pagesCount: Math.ceil(totalCount / pageSize),
+        page: +pageNumber,
+        pageSize: +pageSize,
+        totalCount,
+        items: res,
+      };
+    } catch (err) {
+      console.log("ERROR", err);
+    }
   }
 
   public async getBlogById(blogId: string): Promise<BlogDBType | null> {
