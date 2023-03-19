@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import blogsRouter from "../../routes/blogs-route";
 
 export const expressConfig = (): Application => {
   const app: Application = express();
@@ -16,6 +17,8 @@ export const expressConfig = (): Application => {
     })
   );
   app.use(bodyParser.json());
+
+  app.use("/api/blogs", blogsRouter);
 
   return app;
 };
