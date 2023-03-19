@@ -19,6 +19,7 @@ export class BlogsService {
     pageSize = 10,
     pageNumber = 1,
   }: BlogsQueryParams): Promise<Paginator<BlogViewModel[]>> {
+    console.log("=== START SERVICE ===");
     const res = await this.blogsQueryRepository.getAllBlogs({
       sortBy,
       sortDirection,
@@ -26,6 +27,8 @@ export class BlogsService {
       pageSize,
       searchNameTerm,
     });
+
+    console.log("=== FINISH SERVICE ===");
 
     return {
       ...res,

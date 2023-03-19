@@ -12,6 +12,7 @@ export class BlogsQueryRepository {
     pageSize = 10,
     pageNumber = 1,
   }: BlogsQueryParams): Promise<Paginator<BlogDBType[]>> {
+    console.log("=== START REPO ===");
     const sorting = getObjectToSort({ sortBy, sortDirection });
     const pageSizeValue = pageSize < 1 ? 1 : pageSize;
     const filter = { name: { $regex: searchNameTerm, $options: "i" } };
@@ -21,6 +22,8 @@ export class BlogsQueryRepository {
       .skip((+pageNumber - 1) * +pageSizeValue)
       .limit(+pageSizeValue)
       .sort(sorting);
+
+    console.log("=== FINISH REPO ===");
 
     return {
       pagesCount: Math.ceil(totalCount / pageSize),
