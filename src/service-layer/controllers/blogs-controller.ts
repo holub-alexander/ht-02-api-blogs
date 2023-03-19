@@ -18,9 +18,9 @@ export class BlogsController {
   public async getBlogsHandler(req: Request<{}, {}, {}, BlogsQueryParams>, res: Response) {
     try {
       const { sortBy, sortDirection, pageNumber, pageSize, searchNameTerm } = req.query;
-      const data = await this.blogsService.getAllBlogs({ sortBy, sortDirection, pageNumber, pageSize, searchNameTerm });
+      // const data = await this.blogsService.getAllBlogs({ sortBy, sortDirection, pageNumber, pageSize, searchNameTerm });
 
-      res.status(constants.HTTP_STATUS_OK).send(data);
+      res.status(constants.HTTP_STATUS_OK).send(true);
     } catch (err) {
       console.log("blog", err);
     }
