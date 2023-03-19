@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { constants } from "http2";
 import { CommentsQueryRepository } from "../../data-layer/repositories/comments/comments-query-repository";
 import { CommentsWriteRepository } from "../../data-layer/repositories/comments/comments-write-repository";
-import { CommentInputModel } from "../request/request-types";
+import { CommentInputModel, LikeInputModel } from "../request/request-types";
 import { UsersQueryRepository } from "../../data-layer/repositories/users/users-query-repository";
 
 export class CommentsController {
@@ -15,7 +15,7 @@ export class CommentsController {
   ) {}
 
   async getCommentByIdHandler(req: Request<{ id: string }>, res: Response) {
-    const data = await this.commentsService.getCommentById(req.params.id);
+    const data = await this.commentsService.getCommentById(req.params.id, req.user?.login ?? null);
 
     if (data) {
       return res.status(constants.HTTP_STATUS_OK).send(data);
@@ -25,7 +25,7 @@ export class CommentsController {
   }
 
   async deleteCommentByIdHandler(req: Request<{ id: string }>, res: Response) {
-    const user = await this.usersQueryRepository.getUserByLoginOrEmailOnly(req.user.login);
+    const user = await this.usersQueryRepository.getUserByLogin(req.user.login);
     const comment = await this.commentsQueryRepository.getCommentById(req.params.id);
 
     if (!user || !comment) {
@@ -45,9 +45,7 @@ export class CommentsController {
 
   async updateCommentByIdHandler(req: Request<{ id: string }, {}, CommentInputModel>, res: Response) {
     const comment = await this.commentsQueryRepository.getCommentById(req.params.id);
-    const user = await this.usersQueryRepository.getUserByLoginOrEmailOnly(req.user.login);
-
-    console.log(comment, user);
+    const user = await this.usersQueryRepository.getUserByLogin(req.user.login);
 
     if (!user || !comment) {
       return res.sendStatus(constants.HTTP_STATUS_NOT_FOUND);
@@ -58,6 +56,16 @@ export class CommentsController {
     }
 
     const isUpdated = await this.commentsWriteRepository.updateCommentById(req.params.id, req.body);
+
+    return res.sendStatus(isUpdated ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);
+  }
+
+  async setLikeUnlikeForCommentHandler(req: Request<{ id: string }, {}, LikeInputModel>, res: Response) {
+    const isUpdated = await this.commentsService.setLikeUnlikeForComment(
+      req.params.id,
+      req.user.login,
+      req.body.likeStatus
+    );
 
     return res.sendStatus(isUpdated ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);
   }

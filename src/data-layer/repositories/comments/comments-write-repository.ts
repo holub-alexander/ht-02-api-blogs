@@ -44,4 +44,12 @@ export class CommentsWriteRepository {
     const res = await CommentModel.updateOne({ _id: new ObjectId(id) }, { $set: body });
     return res.modifiedCount > 0;
   }
+
+  async likeCommentById(id: ObjectId, isInc: boolean) {
+    return CommentModel.updateOne({ _id: id }, { $inc: { "likesInfo.likesCount": isInc ? 1 : -1 } });
+  }
+
+  async dislikeCommentById(id: ObjectId, isInc: boolean) {
+    return CommentModel.updateOne({ _id: id }, { $inc: { "likesInfo.dislikesCount": isInc ? 1 : -1 } });
+  }
 }

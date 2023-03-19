@@ -1,3 +1,5 @@
+import { LikeStatuses } from "../../@types";
+
 export type BlogInputModel = {
   name: string;
   description: string;
@@ -47,4 +49,8 @@ export type PasswordRecoveryInputModel = {
 export type NewPasswordRecoveryInputModel = {
   newPassword: string;
   recoveryCode: string;
+};
+
+export type LikeInputModel = {
+  likeStatus: LikeStatuses;
 };

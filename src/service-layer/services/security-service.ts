@@ -63,7 +63,7 @@ export class SecurityService {
           iat: newIssuedAtWithoutMs.valueOf() / 1000,
         } as UserRefreshTokenPayload,
         process.env.REFRESH_TOKEN_PRIVATE_KEY as string,
-        "20s"
+        "2h"
       );
     }
 

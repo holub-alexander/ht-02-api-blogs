@@ -29,7 +29,10 @@ export class AuthController {
     }
 
     /* TODO: test */
-    res.cookie("refreshToken", tokens.refreshToken, { httpOnly: false, secure: false });
+    res.cookie("refreshToken", tokens.refreshToken, {
+      httpOnly: JSON.parse(process.env.ENABLE_SECURE_COOKIE as string),
+      secure: JSON.parse(process.env.ENABLE_SECURE_COOKIE as string),
+    });
     return res.status(constants.HTTP_STATUS_OK).send({ accessToken: tokens.accessToken });
   }
 
@@ -101,7 +104,10 @@ export class AuthController {
     }
 
     /* TODO: test */
-    res.cookie("refreshToken", newTokens.refreshToken, { httpOnly: false, secure: false });
+    res.cookie("refreshToken", newTokens.refreshToken, {
+      httpOnly: JSON.parse(process.env.ENABLE_SECURE_COOKIE as string),
+      secure: JSON.parse(process.env.ENABLE_SECURE_COOKIE as string),
+    });
 
     return res.status(constants.HTTP_STATUS_OK).send({ accessToken: newTokens.accessToken });
   }

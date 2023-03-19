@@ -69,6 +69,7 @@ export class PostsController {
       pageNumber,
       pageSize,
       postId: req.params.id,
+      userLogin: req.user?.login,
     });
 
     if (!data) {

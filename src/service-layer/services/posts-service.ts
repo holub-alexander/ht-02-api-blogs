@@ -1,4 +1,4 @@
-import { CommentDBType, PaginationAndSortQueryParams, Paginator, SortDirections } from "../../@types";
+import { CommentDBType, LikeStatuses, PaginationAndSortQueryParams, Paginator, SortDirections } from "../../@types";
 import { CommentInputModel, PostInputModel } from "../request/request-types";
 import { CommentViewModel, PostViewModel } from "../response/response-types";
 import { PostsQueryRepository } from "../../data-layer/repositories/posts/posts-query-repository";
@@ -10,6 +10,7 @@ import { CommentsQueryRepository } from "../../data-layer/repositories/comments/
 import { UsersQueryRepository } from "../../data-layer/repositories/users/users-query-repository";
 import { ObjectId } from "mongodb";
 import { CommentModel } from "../../data-layer/models/comment-model";
+import { ReactionsQueryRepository } from "../../data-layer/repositories/reactions/reactions-query-repository";
 
 export class PostsService {
   constructor(
@@ -17,7 +18,8 @@ export class PostsService {
     private postsWriteRepository: PostsWriteRepository,
     private commentsQueryRepository: CommentsQueryRepository,
     private commentsWriteRepository: CommentsWriteRepository,
-    private usersQueryRepository: UsersQueryRepository
+    private usersQueryRepository: UsersQueryRepository,
+    private reactionsQueryRepository: ReactionsQueryRepository
   ) {}
 
   async getAllPosts({
@@ -87,7 +89,7 @@ export class PostsService {
     const newCommentDTO = new CommentModel<CommentDBType>({
       _id: new ObjectId(),
       content: body.content,
-      commentatorInfo: { id: user._id, login: user.accountData.login },
+      commentatorInfo: { id: user._id, login },
       createdAt: new Date().toISOString(),
       postId: findPost._id,
       likesInfo: {
@@ -98,7 +100,7 @@ export class PostsService {
 
     const data = await this.commentsWriteRepository.createCommentByCurrentPost(postId, newCommentDTO);
 
-    return data ? CommentMapper.mapCommentViewModel(data) : null;
+    return data ? CommentMapper.mapCommentViewModel(data, null) : null;
   }
 
   async getAllCommentsForPost({
@@ -107,7 +109,8 @@ export class PostsService {
     sortDirection = SortDirections.DESC,
     sortBy = "",
     postId,
-  }: PaginationAndSortQueryParams & { postId: string }) {
+    userLogin = null,
+  }: PaginationAndSortQueryParams & { postId: string; userLogin: string | null }) {
     const post = await this.postsQueryRepository.getPostById(postId);
 
     if (!post) {
@@ -122,9 +125,22 @@ export class PostsService {
       postId,
     });
 
+    if (userLogin) {
+      const user = await this.usersQueryRepository.getUserByLogin(userLogin);
+      const reactions = await this.reactionsQueryRepository.getReactionCommentsByIds(
+        data.items.map((comment) => comment._id),
+        user!._id
+      );
+
+      return {
+        ...data,
+        items: CommentMapper.mapCommentsViewModel(data.items, reactions),
+      };
+    }
+
     return {
       ...data,
-      items: CommentMapper.mapCommentsViewModel(data.items),
+      items: CommentMapper.mapCommentsViewModel(data.items, null),
     };
   }
 }

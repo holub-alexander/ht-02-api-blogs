@@ -80,7 +80,7 @@ export class AuthService {
     const accessToken = await jwtToken(
       { login: user.accountData.login },
       process.env.ACCESS_TOKEN_PRIVATE_KEY as string,
-      "1h"
+      "10m"
     );
 
     /* TODO: test */
@@ -210,7 +210,7 @@ export class AuthService {
     const accessToken = await jwtToken(
       { login: user.accountData.login },
       process.env.ACCESS_TOKEN_PRIVATE_KEY as string,
-      "1h"
+      "10m"
     );
 
     return { accessToken, refreshToken: newRefreshToken };

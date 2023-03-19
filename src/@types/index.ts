@@ -108,3 +108,14 @@ export type PostDBType = WithId<{
     name: string;
   };
 }>;
+
+export type ReactionDBType = WithId<{
+  comment: {
+    id: ObjectId;
+  };
+  user: {
+    id: ObjectId;
+  };
+  createdAt: string;
+  likeStatus: LikeStatuses;
+}>;

@@ -2,7 +2,7 @@ import express from "express";
 import { validate } from "../middleware/custom/validate";
 import { postSchema, postsQuerySchema } from "../business-layer/validators/schemas/post-schema";
 import { basicAuth } from "../middleware/custom/basic-auth";
-import { verifyJwtToken } from "../middleware/custom/jwt-auth";
+import { verifyJwtToken, verifyJwtTokenOptional } from "../middleware/custom/jwt-auth";
 import { commentCreateSchema } from "../business-layer/validators/schemas/comment-schema";
 import { postsController } from "../data-layer/composition-root";
 
@@ -20,6 +20,10 @@ postsRouter.post(
   validate,
   postsController.createCommentByCurrentPost.bind(postsController)
 );
-postsRouter.get("/:id/comments", postsController.getAllCommentsForPostHandler.bind(postsController));
+postsRouter.get(
+  "/:id/comments",
+  verifyJwtTokenOptional,
+  postsController.getAllCommentsForPostHandler.bind(postsController)
+);
 
 export default postsRouter;

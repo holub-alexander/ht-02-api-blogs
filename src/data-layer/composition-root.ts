@@ -21,6 +21,8 @@ import { SecurityService } from "../service-layer/services/security-service";
 import { SecurityController } from "../service-layer/controllers/security-controller";
 import { AuthService } from "../service-layer/services/auth-service";
 import { AuthController } from "../service-layer/controllers/auth-controller";
+import { ReactionsQueryRepository } from "./repositories/reactions/reactions-query-repository";
+import { ReactionsWriteRepository } from "./repositories/reactions/reactions-write-repository";
 
 /**
  * Blogs
@@ -31,20 +33,31 @@ const blogsWriteRepository = new BlogsWriteRepository(blogsQueryRepository);
 export const blogsService = new BlogsService(blogsQueryRepository, blogsWriteRepository);
 
 /**
- * Comments
- */
-
-const commentsQueryRepository = new CommentsQueryRepository();
-const commentsWriteRepository = new CommentsWriteRepository(commentsQueryRepository);
-const commentsService = new CommentsService(commentsQueryRepository);
-
-/**
  * Users
  */
 
 const usersQueryRepository = new UsersQueryRepository();
 const usersWriteRepository = new UsersWriteRepository(usersQueryRepository);
 const usersService = new UsersService(usersQueryRepository, usersWriteRepository);
+
+/* Reactions */
+
+const reactionsQueryRepository = new ReactionsQueryRepository();
+const reactionsWriteRepository = new ReactionsWriteRepository();
+
+/**
+ * Comments
+ */
+
+const commentsQueryRepository = new CommentsQueryRepository();
+const commentsWriteRepository = new CommentsWriteRepository(commentsQueryRepository);
+const commentsService = new CommentsService(
+  commentsQueryRepository,
+  commentsWriteRepository,
+  usersQueryRepository,
+  reactionsQueryRepository,
+  reactionsWriteRepository
+);
 
 /**
  * Posts
@@ -57,7 +70,8 @@ const postsService = new PostsService(
   postsWriteRepository,
   commentsQueryRepository,
   commentsWriteRepository,
-  usersQueryRepository
+  usersQueryRepository,
+  reactionsQueryRepository
 );
 
 /**

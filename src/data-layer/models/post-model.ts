@@ -6,16 +6,22 @@ const postSchema = new mongoose.Schema<PostDBType>({
     required: true,
     trim: true,
     type: String,
+    min: 1,
+    max: 30,
   },
   shortDescription: {
     required: true,
     trim: true,
     type: String,
+    min: 1,
+    max: 100,
   },
   content: {
     required: true,
     trim: true,
     type: String,
+    min: 1,
+    max: 1000,
   },
   blog: {
     id: mongoose.Types.ObjectId,

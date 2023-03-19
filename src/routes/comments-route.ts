@@ -1,6 +1,6 @@
 import express from "express";
-import { verifyJwtToken } from "../middleware/custom/jwt-auth";
-import { commentCreateSchema } from "../business-layer/validators/schemas/comment-schema";
+import { verifyJwtToken, verifyJwtTokenOptional } from "../middleware/custom/jwt-auth";
+import { commentCreateSchema, commentLikeUnlikeSchema } from "../business-layer/validators/schemas/comment-schema";
 import { validate } from "../middleware/custom/validate";
 import { commentsController } from "../data-layer/composition-root";
 
@@ -14,4 +14,11 @@ commentsRouter.put(
   commentsController.updateCommentByIdHandler.bind(commentsController)
 );
 commentsRouter.delete("/:id", verifyJwtToken, commentsController.deleteCommentByIdHandler.bind(commentsController));
-commentsRouter.get("/:id", commentsController.getCommentByIdHandler.bind(commentsController));
+commentsRouter.get("/:id", verifyJwtTokenOptional, commentsController.getCommentByIdHandler.bind(commentsController));
+commentsRouter.put(
+  "/:id/like-status",
+  verifyJwtToken,
+  commentLikeUnlikeSchema,
+  validate,
+  commentsController.setLikeUnlikeForCommentHandler.bind(commentsController)
+);
