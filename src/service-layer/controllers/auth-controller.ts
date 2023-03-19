@@ -12,6 +12,7 @@ import { constants } from "http2";
 import { LoginSuccessViewModel } from "../response/response-types";
 import { APIErrorResult } from "../../@types";
 import { AuthService } from "../services/auth-service";
+import { config } from "../../config";
 
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -30,8 +31,8 @@ export class AuthController {
 
     /* TODO: test */
     res.cookie("refreshToken", tokens.refreshToken, {
-      httpOnly: JSON.parse(process.env.ENABLE_SECURE_COOKIE as string),
-      secure: JSON.parse(process.env.ENABLE_SECURE_COOKIE as string),
+      httpOnly: config.enableSecureCookie,
+      secure: config.enableSecureCookie,
     });
     return res.status(constants.HTTP_STATUS_OK).send({ accessToken: tokens.accessToken });
   }
@@ -105,8 +106,8 @@ export class AuthController {
 
     /* TODO: test */
     res.cookie("refreshToken", newTokens.refreshToken, {
-      httpOnly: JSON.parse(process.env.ENABLE_SECURE_COOKIE as string),
-      secure: JSON.parse(process.env.ENABLE_SECURE_COOKIE as string),
+      httpOnly: config.enableSecureCookie,
+      secure: config.enableSecureCookie,
     });
 
     return res.status(constants.HTTP_STATUS_OK).send({ accessToken: newTokens.accessToken });
