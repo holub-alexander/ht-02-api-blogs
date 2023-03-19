@@ -14,10 +14,14 @@ const app = applicationConfig();
  *  Routes
  */
 
-app.use("/api/auth", authRouter);
-app.use("/api/blogs", blogsRouter);
-app.use("/api/posts", postsRouter);
-app.use("/api/users", usersRouter);
-app.use("/api/comments", commentsRouter);
-app.use("/api/security", securityRouter);
-app.use("/api/testing", testingRouter);
+try {
+  app.use("/api/auth", authRouter);
+  app.use("/api/blogs", blogsRouter);
+  app.use("/api/posts", postsRouter);
+  app.use("/api/users", usersRouter);
+  app.use("/api/comments", commentsRouter);
+  app.use("/api/security", securityRouter);
+  app.use("/api/testing", testingRouter);
+} catch (err) {
+  console.log("ERR", err);
+}
