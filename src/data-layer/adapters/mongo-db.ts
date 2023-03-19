@@ -10,17 +10,19 @@ const db = client.db(process.env.MONGODB_DATABASE_NAME);
  * Collections
  */
 
-export const blogsCollection = db.collection("blogs");
+// export const blogsCollection = db.collection("blogs");
 export const postsCollection = db.collection("posts");
 export const usersCollection = db.collection("users");
-export const commentsCollection = db.collection("comments");
+// export const commentsCollection = db.collection("comments");
 
 export const mongoDB = async () => {
   try {
+    console.log(uri);
+
     await mongoose.connect(uri);
     console.log("Connected successfully to MongoDB server");
   } catch (err) {
-    await client.close();
+    await mongoose.disconnect();
     console.log(err);
   }
 };

@@ -1,10 +1,10 @@
 import blogsRouter from "./routes/blogs-route";
-import postsRouter from "./routes/posts-route";
-import testingRouter from "./routes/testing-route";
-import usersRouter from "./routes/users-route";
-import authRouter from "./routes/auth-route";
-import { commentsRouter } from "./routes/comments-route";
-import { securityRouter } from "./routes/security-route";
+// import postsRouter from "./routes/posts-route";
+// import testingRouter from "./routes/testing-route";
+// import usersRouter from "./routes/users-route";
+// import authRouter from "./routes/auth-route";
+// import { commentsRouter } from "./routes/comments-route";
+// import { securityRouter } from "./routes/security-route";
 
 import { applicationConfig } from "./middleware/config/application";
 

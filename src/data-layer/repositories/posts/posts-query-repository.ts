@@ -1,7 +1,7 @@
 import { PaginationAndSortQueryParams, Paginator, PostDBType, SortDirections } from "../../../@types";
 import { ObjectId, WithId } from "mongodb";
 import { getObjectToSort } from "../../../utils/common/get-object-to-sort";
-import { postsCollection } from "../../adapters/mongo-db";
+// import { postsCollection } from "../../adapters/mongo-db";
 import { PostViewModel } from "../../../service-layer/response/response-types";
 import { PostModel } from "../../models/post-model";
 import { HydratedDocument } from "mongoose";
