@@ -38,10 +38,15 @@ export class PostsMapper {
   public static async mapPostsViewModel(
     posts: PostDBType[],
     reactions: ReactionDBType[] | null,
-    getLatestReactionsForPost: (postId: ObjectId, limit: number) => Promise<HydratedDocument<ReactionDBType>[]>
+    getLatestReactionsForPost: (
+      postId: ObjectId,
+      limit: number,
+      userId: ObjectId | null
+    ) => Promise<HydratedDocument<ReactionDBType>[]>,
+    userId: ObjectId | null
   ): Promise<PostViewModel[]> {
     const arr = posts.map(async (post) => {
-      const lastReactions: HydratedDocument<ReactionDBType>[] = await getLatestReactionsForPost(post._id, 3);
+      const lastReactions: HydratedDocument<ReactionDBType>[] = await getLatestReactionsForPost(post._id, 3, userId);
 
       if (!reactions || !lastReactions) {
         return this.getResult(post, null, lastReactions);
@@ -62,9 +67,14 @@ export class PostsMapper {
   public static async mapPostViewModel(
     post: PostDBType,
     reaction: ReactionDBType | null,
-    getLatestReactionsForPost: (postId: ObjectId, limit: number) => Promise<HydratedDocument<ReactionDBType>[]>
+    getLatestReactionsForPost: (
+      postId: ObjectId,
+      limit: number,
+      userId: ObjectId | null
+    ) => Promise<HydratedDocument<ReactionDBType>[]>,
+    userId: ObjectId | null
   ): Promise<PostViewModel> {
-    const lastReactions: HydratedDocument<ReactionDBType>[] = await getLatestReactionsForPost(post._id, 3);
+    const lastReactions: HydratedDocument<ReactionDBType>[] = await getLatestReactionsForPost(post._id, 3, userId);
 
     return this.getResult(post, reaction, lastReactions);
   }

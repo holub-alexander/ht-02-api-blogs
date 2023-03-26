@@ -9,7 +9,7 @@ const reactionSchema = new mongoose.Schema<ReactionDBType>({
     type: mongoose.Types.ObjectId,
   },
   user: {
-    id: { type: mongoose.Types.ObjectId, required: true },
+    id: { type: mongoose.Types.ObjectId },
     login: { type: String, required: true },
   },
   createdAt: Date,

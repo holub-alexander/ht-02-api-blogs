@@ -20,7 +20,13 @@ export class ReactionsQueryRepository {
     return ReactionModel.find<ReactionDBType>({ "user.id": userId, postId: { $in: postsIds } });
   }
 
-  public async getLatestReactionsForPost(postId: ObjectId, limit: number): Promise<HydratedDocument<ReactionDBType>[]> {
-    return ReactionModel.find({ postId }).sort({ createdAt: "desc" }).limit(limit);
+  public async getLatestReactionsForPost(
+    postId: ObjectId,
+    limit: number,
+    userId: ObjectId | null
+  ): Promise<HydratedDocument<ReactionDBType>[]> {
+    return ReactionModel.find({ postId, "user.id": { $ne: userId } })
+      .sort({ createdAt: "desc" })
+      .limit(limit);
   }
 }

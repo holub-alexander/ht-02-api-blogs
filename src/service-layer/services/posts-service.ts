@@ -58,7 +58,8 @@ export class PostsService {
         items: await PostsMapper.mapPostsViewModel(
           res.items,
           reactions,
-          this.reactionsQueryRepository.getLatestReactionsForPost
+          this.reactionsQueryRepository.getLatestReactionsForPost,
+          user!._id
         ),
       };
     }
@@ -68,7 +69,8 @@ export class PostsService {
       items: await PostsMapper.mapPostsViewModel(
         res.items,
         null,
-        this.reactionsQueryRepository.getLatestReactionsForPost
+        this.reactionsQueryRepository.getLatestReactionsForPost,
+        null
       ),
     };
   }
@@ -101,7 +103,8 @@ export class PostsService {
         items: await PostsMapper.mapPostsViewModel(
           res.items,
           reactions,
-          this.reactionsQueryRepository.getLatestReactionsForPost
+          this.reactionsQueryRepository.getLatestReactionsForPost,
+          user!._id
         ),
       };
     }
@@ -111,7 +114,8 @@ export class PostsService {
       items: await PostsMapper.mapPostsViewModel(
         res.items,
         null,
-        this.reactionsQueryRepository.getLatestReactionsForPost
+        this.reactionsQueryRepository.getLatestReactionsForPost,
+        null
       ),
     };
   }
@@ -130,12 +134,13 @@ export class PostsService {
       return await PostsMapper.mapPostViewModel(
         post,
         reaction,
-        this.reactionsQueryRepository.getLatestReactionsForPost
+        this.reactionsQueryRepository.getLatestReactionsForPost,
+        user!._id
       );
     }
 
     return post
-      ? await PostsMapper.mapPostViewModel(post, null, this.reactionsQueryRepository.getLatestReactionsForPost)
+      ? await PostsMapper.mapPostViewModel(post, null, this.reactionsQueryRepository.getLatestReactionsForPost, null)
       : null;
   }
 
@@ -143,7 +148,7 @@ export class PostsService {
     const newPost = await this.postsWriteRepository.createPost(body);
 
     return newPost
-      ? await PostsMapper.mapPostViewModel(newPost, null, this.reactionsQueryRepository.getLatestReactionsForPost)
+      ? await PostsMapper.mapPostViewModel(newPost, null, this.reactionsQueryRepository.getLatestReactionsForPost, null)
       : null;
   }
 
