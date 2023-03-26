@@ -23,10 +23,9 @@ export class ReactionsQueryRepository {
   public async getLatestReactionsForPost(
     postId: ObjectId,
     limit: number,
+    // @ts-ignore
     userId: ObjectId | null
   ): Promise<HydratedDocument<ReactionDBType>[]> {
-    return ReactionModel.find({ postId, "user.id": { $ne: userId } })
-      .sort({ createdAt: "desc" })
-      .limit(limit);
+    return ReactionModel.find({ postId }).sort({ createdAt: "desc" }).limit(limit);
   }
 }
