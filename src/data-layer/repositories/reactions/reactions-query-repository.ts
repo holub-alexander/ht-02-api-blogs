@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { ReactionModel } from "../../models/reaction-model";
-import { ReactionDBType } from "../../../@types";
+import { LikeStatuses, ReactionDBType } from "../../../@types";
 import { HydratedDocument } from "mongoose";
 
 export class ReactionsQueryRepository {
@@ -26,6 +26,6 @@ export class ReactionsQueryRepository {
     // @ts-ignore
     userId: ObjectId | null
   ): Promise<HydratedDocument<ReactionDBType>[]> {
-    return ReactionModel.find({ postId }).sort({ createdAt: "desc" }).limit(limit);
+    return ReactionModel.find({ postId, likeStatus: LikeStatuses.LIKE }).sort({ createdAt: "desc" }).limit(limit);
   }
 }
