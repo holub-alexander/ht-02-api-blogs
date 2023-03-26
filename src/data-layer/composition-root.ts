@@ -71,7 +71,8 @@ const postsService = new PostsService(
   commentsQueryRepository,
   commentsWriteRepository,
   usersQueryRepository,
-  reactionsQueryRepository
+  reactionsQueryRepository,
+  reactionsWriteRepository
 );
 
 /**

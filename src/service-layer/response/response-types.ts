@@ -7,10 +7,21 @@ export type BlogViewModel = BlogInputModel & {
   isMembership: boolean;
 };
 
+export type NewestLike = {
+  addedAt: Date | string;
+  userId: string;
+  login: string;
+};
+
+export type ExtendedLikesInfoViewModel = LikesInfoViewModel & {
+  newestLikes: NewestLike[] | [];
+};
+
 export type PostViewModel = PostInputModel & {
   id: string;
   blogName: string;
   createdAt: string;
+  extendedLikesInfo: ExtendedLikesInfoViewModel;
 };
 
 export type UserViewModel = Omit<UserInputModel, "password"> & {

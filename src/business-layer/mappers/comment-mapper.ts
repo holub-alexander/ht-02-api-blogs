@@ -29,7 +29,7 @@ export class CommentMapper {
       }
 
       const foundReactionIndex = reactions.findIndex(
-        (reaction) => reaction.comment.id.toString() === comment._id.toString()
+        (reaction) => reaction.commentId!.toString() === comment._id.toString()
       );
 
       if (foundReactionIndex > -1) {

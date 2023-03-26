@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { constants } from "http2";
 import { PostsService } from "../services/posts-service";
 import { PaginationAndSortQueryParams } from "../../@types";
-import { CommentInputModel, PostInputModel } from "../request/request-types";
+import { CommentInputModel, LikeInputModel, PostInputModel } from "../request/request-types";
 import { PostViewModel } from "../response/response-types";
 import { PostsWriteRepository } from "../../data-layer/repositories/posts/posts-write-repository";
 
@@ -11,13 +11,19 @@ export class PostsController {
 
   async getPostsHandler(req: Request<{}, {}, {}, PaginationAndSortQueryParams>, res: Response) {
     const { sortBy, sortDirection, pageNumber, pageSize } = req.query;
-    const data = await this.postsService.getAllPosts({ sortBy, sortDirection, pageNumber, pageSize });
+    const data = await this.postsService.getAllPosts({
+      sortBy,
+      sortDirection,
+      pageNumber,
+      pageSize,
+      userLogin: req.user?.login || "",
+    });
 
     res.status(constants.HTTP_STATUS_OK).send(data);
   }
 
   async getPostByIdHandler(req: Request<{ id: string }>, res: Response) {
-    const data = await this.postsService.getPostById(req.params.id);
+    const data = await this.postsService.getPostById(req.params.id, req.user?.login || "");
 
     if (data) {
       return res.status(constants.HTTP_STATUS_OK).send(data);
@@ -77,5 +83,11 @@ export class PostsController {
     }
 
     res.status(constants.HTTP_STATUS_OK).send(data);
+  }
+
+  async setLikeUnlikeForPostHandler(req: Request<{ id: string }, {}, LikeInputModel>, res: Response) {
+    const isUpdated = await this.postsService.setLikeUnlikeForPost(req.params.id, req.user.login, req.body.likeStatus);
+
+    return res.sendStatus(isUpdated ? constants.HTTP_STATUS_NO_CONTENT : constants.HTTP_STATUS_NOT_FOUND);
   }
 }

@@ -2,6 +2,7 @@ import { checkSchema } from "express-validator";
 import { paginationQueryParamsSchema } from "./query-params/pagination-schema";
 import { sortQueryParamsSchema } from "./query-params/sort-schema";
 import { blogsService } from "../../../data-layer/composition-root";
+import { LikeStatuses } from "../../../@types";
 
 export const postsQuerySchema = [paginationQueryParamsSchema, sortQueryParamsSchema];
 
@@ -87,6 +88,18 @@ export const postSchema = checkSchema(
             return Promise.reject("Blog with specified id was not found");
           }
         },
+      },
+    },
+  },
+  ["body"]
+);
+
+export const postLikeUnlikeSchema = checkSchema(
+  {
+    likeStatus: {
+      isIn: {
+        errorMessage: "Invalid status entered",
+        options: [[LikeStatuses.NONE, LikeStatuses.LIKE, LikeStatuses.DISLIKE]],
       },
     },
   },

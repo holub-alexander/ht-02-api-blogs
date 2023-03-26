@@ -55,6 +55,11 @@ export type RefreshTokenMeta = {
   expirationDate: Date;
 };
 
+export type LikesInfo = {
+  likesCount: number;
+  dislikesCount: number;
+};
+
 /**
  * DB Types
  */
@@ -92,10 +97,7 @@ export type CommentDBType = WithId<{
   };
   postId: ObjectId;
   createdAt: string;
-  likesInfo: {
-    likesCount: number;
-    dislikesCount: number;
-  };
+  likesInfo: LikesInfo;
 }>;
 
 export type PostDBType = WithId<{
@@ -107,14 +109,15 @@ export type PostDBType = WithId<{
     id: ObjectId;
     name: string;
   };
+  likesInfo: LikesInfo;
 }>;
 
 export type ReactionDBType = WithId<{
-  comment: {
-    id: ObjectId;
-  };
+  commentId: ObjectId | null;
+  postId: ObjectId | null;
   user: {
     id: ObjectId;
+    login: string;
   };
   createdAt: string;
   likeStatus: LikeStatuses;

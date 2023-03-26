@@ -2,14 +2,15 @@ import mongoose from "mongoose";
 import { CommentDBType, ReactionDBType } from "../../@types";
 
 const reactionSchema = new mongoose.Schema<ReactionDBType>({
-  comment: {
-    id: {
-      type: mongoose.Types.ObjectId,
-      required: true,
-    },
+  commentId: {
+    type: mongoose.Types.ObjectId,
+  },
+  postId: {
+    type: mongoose.Types.ObjectId,
   },
   user: {
     id: { type: mongoose.Types.ObjectId, required: true },
+    login: { type: String, required: true },
   },
   createdAt: Date,
   likeStatus: {

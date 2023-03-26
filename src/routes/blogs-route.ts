@@ -4,12 +4,13 @@ import { blogSchema, blogsQuerySchema } from "../business-layer/validators/schem
 import { basicAuth } from "../middleware/custom/basic-auth";
 import { blogPostSchema } from "../business-layer/validators/schemas/post-schema";
 import { blogsController } from "../data-layer/composition-root";
+import { verifyJwtTokenOptional } from "../middleware/custom/jwt-auth";
 
 const blogsRouter = express.Router();
 
 blogsRouter.get("/", ...blogsQuerySchema, validate, blogsController.getBlogsHandler.bind(blogsController));
 blogsRouter.get("/:id", blogsController.getBlogByIdHandler.bind(blogsController));
-blogsRouter.get("/:id/posts", blogsController.getAllPostsByBlogId.bind(blogsController));
+blogsRouter.get("/:id/posts", verifyJwtTokenOptional, blogsController.getAllPostsByBlogId.bind(blogsController));
 blogsRouter.post("/", basicAuth, blogSchema, validate, blogsController.createBlogHandler.bind(blogsController));
 blogsRouter.post(
   "/:id/posts",

@@ -8,6 +8,7 @@ import { ReactionsWriteRepository } from "../../data-layer/repositories/reaction
 import { LikeStatuses, ReactionDBType, UserAccountDBType } from "../../@types";
 import { ReactionModel } from "../../data-layer/models/reaction-model";
 import { CommentsWriteRepository } from "../../data-layer/repositories/comments/comments-write-repository";
+import { HydratedDocument } from "mongoose";
 
 export class CommentsService {
   constructor(
@@ -91,7 +92,7 @@ export class CommentsService {
 
     if (reaction) {
       await this.incrementDecrementLikeCounter(comment._id, reaction.likeStatus, likeStatus);
-      const res = await this.reactionsWriteRepository.updateLikeStatusForComment(reaction._id, likeStatus);
+      const res = await this.reactionsWriteRepository.updateLikeStatus(reaction._id, likeStatus);
 
       if (res) {
         return reaction;
@@ -100,19 +101,20 @@ export class CommentsService {
       return null;
     }
 
-    const reactionDTO = new ReactionModel({
+    const reactionDTO: HydratedDocument<ReactionDBType> = new ReactionModel({
       _id: new ObjectId(),
+      commentId: comment._id,
+      postId: null,
       user: {
         id: user._id,
+        login: user.accountData.login,
       },
-      comment: {
-        id: comment._id,
-      },
+      createdAt: new Date(),
       likeStatus,
     });
 
     await this.incrementDecrementLikeCounter(comment._id, null, likeStatus);
-    await this.reactionsWriteRepository.createReactionForComment(reactionDTO);
+    await this.reactionsWriteRepository.createReaction(reactionDTO);
 
     return reactionDTO;
   }

@@ -27,6 +27,10 @@ export class PostsWriteRepository {
           id: new ObjectId(findBlog._id),
           name: findBlog.name,
         },
+        likesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+        },
       });
 
       return await doc.save();
@@ -61,5 +65,13 @@ export class PostsWriteRepository {
   async deleteAllPosts(): Promise<boolean> {
     const res = await PostModel.deleteMany({});
     return res.deletedCount > 0;
+  }
+
+  async likePostById(_id: ObjectId, isInc: boolean) {
+    return PostModel.updateOne({ _id }, { $inc: { "likesInfo.likesCount": isInc ? 1 : -1 } });
+  }
+
+  async dislikePostById(_id: ObjectId, isInc: boolean) {
+    return PostModel.updateOne({ _id }, { $inc: { "likesInfo.dislikesCount": isInc ? 1 : -1 } });
   }
 }

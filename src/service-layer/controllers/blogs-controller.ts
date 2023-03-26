@@ -50,6 +50,7 @@ export class BlogsController {
       pageNumber,
       pageSize,
       id: req.params.id,
+      userLogin: req.user?.login || "",
     });
 
     res.status(constants.HTTP_STATUS_OK).send(paginatorPosts);

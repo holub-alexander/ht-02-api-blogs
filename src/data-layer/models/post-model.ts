@@ -32,6 +32,10 @@ const postSchema = new mongoose.Schema<PostDBType>({
     },
   },
   createdAt: Date,
+  likesInfo: {
+    likesCount: { type: Number, required: true },
+    dislikesCount: { type: Number, required: true },
+  },
 });
 
 export const PostModel = mongoose.model<PostDBType>("Post", postSchema);
